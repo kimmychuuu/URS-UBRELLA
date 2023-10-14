@@ -1,5 +1,5 @@
 #pip install guizero
-from guizero import App, Text
+from guizero import App, Text, ButtonGroup, PushButton
 from time import sleep
 from datetime import datetime
 
@@ -90,13 +90,11 @@ def scanQR():
 #Coin Acceptor
 #pip install rpi.gpio
 
-if(test==0):
-    import RPi.GPIO as GPIO
-    coinPin = 10
-    GPIO.setmode(GPIO.BOARD)
-    GPIO.setup(coinPin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-    GPIO.add_event_detect(coinPin, GPIO.FALLING)
-
+#import RPi.GPIO as GPIO
+#coinPin = 10
+#GPIO.setmode(GPIO.BOARD)
+#GPIO.setup(coinPin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+#GPIO.add_event_detect(coinPin, GPIO.FALLING)
 
 #Utilities
 def isStudent(code):
@@ -119,7 +117,11 @@ def insertCoin(stdBal, Fee):
     amountInsert = 0
     print("(insertCoin) stdBal: " + str(stdBal))
     payment = amountInsert+int(stdBal)
+    
+    coin_title.value = "Please Insert Coin(s)"
+    
     while(payment < Fee):
+        coin_amount.value = "PHP " + str(payment) + " / " + str(Fee)
         if(test):
             payment += int(input("Coin Acceptor: "))
             print("payment: " + str(payment) + "/" + str(Fee))
@@ -127,9 +129,50 @@ def insertCoin(stdBal, Fee):
             if(GPIO.event_detected(coinPin)):
                 payment += 1
                 print("payment: " + str(payment) + "/" + str(Fee))
-        coin_amount.value = "PHP " + str(payment)
+    
+    coin_title.value = ""
+    coin_amount.value = "PHP " + str(payment) + " inserted"
+    sleep(1)
     return int(payment)
+
+def damage_choices(vis):
+    if(vis==1):
+        text_dmg_handle.value = "Handle Damage: "
+        text_dmg_canopy.value = "Canopy Damage: "
+        text_dmg_frame.value = "Frame Damage: "
+        text_dmg_runner.value = "Runner Damage: "
+        text_dmg_rib.value = "Rib Damage: "
+        text_dmg_button.value = "Button Damage: "
+        text_dmg_shaft.value = "Shaft Damage: "
         
+        choice_dmg_handle.show()
+        choice_dmg_canopy.show()
+        choice_dmg_frame.show()
+        choice_dmg_runner.show()
+        choice_dmg_rib.show()
+        choice_dmg_button.show()
+        choice_dmg_shaft.show()
+        
+        btn_continue.show()
+    else:
+        text_dmg_handle.value = ""
+        text_dmg_canopy.value = ""
+        text_dmg_frame.value = ""
+        text_dmg_runner.value = ""
+        text_dmg_rib.value = ""
+        text_dmg_button.value = ""
+        text_dmg_shaft.value = ""
+            
+        choice_dmg_handle.hide()
+        choice_dmg_canopy.hide()
+        choice_dmg_frame.hide()
+        choice_dmg_runner.hide()
+        choice_dmg_rib.hide()
+        choice_dmg_button.hide()
+        choice_dmg_shaft.hide()
+        
+        btn_continue.hide()
+
 def checkUmbrellaDamage():
     dmg_handle = 0
     dmg_canopy = 0
@@ -141,63 +184,86 @@ def checkUmbrellaDamage():
     
     damageFee = 0
     
-    if(test):
-        dmg_handle = int(input("Handle Damage(0-3): "))
-        dmg_canopy = int(input("Canopy Damage(0-3): "))
-        dmg_frame = int(input("Frame Damage(0-3): "))
-        dmg_runner = int(input("Runner Damage(0-3): "))
-        dmg_rib = int(input("Rib Damage(0-3): "))
-        dmg_button = int(input("Button Damage(0-3): "))
-        dmg_shaft = int(input("Shaft Damage(0-3): "))
+    damage_choices(1)
+    pressed=0
+    while(pressed==0):
+        pressed=0
+        app.update()
+        prev_state = int(btn_continue.value)
+        sleep(0.1)
+        app.update()
+        curr_state = int(btn_continue.value)
+        if(prev_state==1 and curr_state==0):
+            print("pressed")
+            pressed=1
+        
+
     
-    if(dmg_handle == 1):
-        damageFee += 10
-    elif(dmg_handle == 2):
-        damageFee += 20
-    elif(dmg_handle == 3):
-        damageFee += 30
+    #if(test):
+     #   dmg_handle = int(input("Handle Damage(0-3): "))
+     #   dmg_canopy = int(input("Canopy Damage(0-3): "))
+     #   dmg_frame = int(input("Frame Damage(0-3): "))
+     #   dmg_runner = int(input("Runner Damage(0-3): "))
+     #   dmg_rib = int(input("Rib Damage(0-3): "))
+     #   dmg_button = int(input("Button Damage(0-3): "))
+     #   dmg_shaft = int(input("Shaft Damage(0-3): "))
     
-    if(dmg_canopy == 1):
-        damageFee += 10
-    elif(dmg_canopy == 2):
-        damageFee += 20
-    elif(dmg_canopy == 3):
-        damageFee += 30
+    print("choice_dmg_handle: " + str(choice_dmg_handle.value_text))
+    print("choice_dmg_canopy: " + str(choice_dmg_canopy.value_text))
+    print("choice_dmg_frame: " + str(choice_dmg_frame.value_text))
+    print("choice_dmg_runner: " + str(choice_dmg_runner.value_text))
+    print("choice_dmg_rib: " + str(choice_dmg_rib.value_text))
+    print("choice_dmg_button: " + str(choice_dmg_button.value_text))
+    print("choice_dmg_shaft: " + str(choice_dmg_shaft.value_text))
     
-    if(dmg_frame == 1):
-        damageFee += 10
-    elif(dmg_frame == 2):
-        damageFee += 20
-    elif(dmg_frame == 3):
-        damageFee += 30
+    if(choice_dmg_handle.value_text == "1"):
+        damageFee += 1
+    elif(choice_dmg_handle.value_text == "2"):
+        damageFee += 2
+    elif(choice_dmg_handle.value_text == "3"):
+        damageFee += 3
     
-    if(dmg_runner == 1):
-        damageFee += 10
-    elif(dmg_runner == 2):
-        damageFee += 20
-    elif(dmg_runner == 3):
-        damageFee += 30
+    if(choice_dmg_canopy.value_text == "1"):
+        damageFee += 1
+    elif(choice_dmg_canopy.value_text == "2"):
+        damageFee += 2
+    elif(choice_dmg_canopy.value_text == "3"):
+        damageFee += 3
     
-    if(dmg_rib == 1):
-        damageFee += 10
-    elif(dmg_rib == 2):
-        damageFee += 20
-    elif(dmg_rib == 3):
-        damageFee += 30
+    if(choice_dmg_frame.value_text == "1"):
+        damageFee += 1
+    elif(choice_dmg_frame.value_text == "2"):
+        damageFee += 2
+    elif(choice_dmg_frame.value_text == "3"):
+        damageFee += 3
     
-    if(dmg_button == 1):
-        damageFee += 10
-    elif(dmg_button == 2):
-        damageFee += 20
-    elif(dmg_button == 3):
-        damageFee += 30
+    if(choice_dmg_runner.value_text == "1"):
+        damageFee += 1
+    elif(choice_dmg_runner.value_text == "2"):
+        damageFee += 2
+    elif(choice_dmg_runner.value_text == "3"):
+        damageFee += 3
     
-    if(dmg_shaft == 1):
-        damageFee += 10
-    elif(dmg_shaft == 2):
-        damageFee += 20
-    elif(dmg_shaft == 3):
-        damageFee += 30
+    if(choice_dmg_rib.value_text == "1"):
+        damageFee += 1
+    elif(choice_dmg_rib.value_text == "2"):
+        damageFee += 2
+    elif(choice_dmg_rib.value_text == "3"):
+        damageFee += 3
+    
+    if(choice_dmg_button.value_text == "1"):
+        damageFee += 1
+    elif(choice_dmg_button.value_text == "2"):
+        damageFee += 2
+    elif(choice_dmg_button.value_text == "3"):
+        damageFee += 3
+    
+    if(choice_dmg_shaft.value_text == "1"):
+        damageFee += 1
+    elif(choice_dmg_shaft.value_text == "1"):
+        damageFee += 2
+    elif(choice_dmg_shaft.value_text == "1"):
+        damageFee += 3
         
     return damageFee
     
@@ -209,16 +275,26 @@ def checkout(dmg_fee, startTime, endTime):
         
     rentHours = delta.total_seconds() // (60*60)
     rentMin = delta.total_seconds() % (60*60)
-    if(rentMin > 10):
-        rentHours += 1
+    rentMin = rentMin // 60
+
+    rent_hours.value = "Rent Duration: " + str(rentHours) + " hrs " + str(rentMin) + " mins"
+    rent_endTime.value = "End Time: " + str(endTime)
     
     print("(checkout) startTime: " + str(startTime))
     print("(checkout) endTime: " + str(endTime))
     print("(checkout) rentHours: " + str(rentHours))
+    print("(checkout) rentMinutes: " + str(rentMin))
     
+    if(rentMin > 10):
+        rentHours += 1
+        
     rentFee = rentHours * 5
+    
     print("(checkout) rentFee: " + str(rentFee))
     print("(checkout) dmg_fee: " + str(dmg_fee))
+    
+    rent_fee.value = "Rent Fee: PHP " + str(rentFee)
+    rent_dmg.value = "Damage Fee: PHP " + str(dmg_fee)
     
     totalFee = rentFee + dmg_fee
     print("(checkout) totalFee: " + str(totalFee))
@@ -228,8 +304,8 @@ def checkout(dmg_fee, startTime, endTime):
         
         
 #ARDUINO COMMANDS
-import serial
-ser = serial.Serial('/dev/ttyUSB1', 9600, timeout=1)
+#import serial
+#ser = serial.Serial('/dev/ttyACM0', 9600, timeout=1)
 
 def sendArduinoDispense():
     print("sending arduino dispense command")
@@ -259,19 +335,44 @@ def initialize():
 
 initialize()
 
-app = App(title="Umbrella",height=800, width=600, layout="grid")
-title_msg = Text(app, text="", grid=[0,0], align="top", size=40, font="Times New Roman", color="Black")
+app = App(title="Umbrella",height=760, width=800, layout="grid")
+title_msg = Text(app, text="", grid=[0,0], align="top", size=30, font="Times New Roman", color="Black")
 display_msg = Text(app, text="", grid=[0,1], align="left", size=20, font="Times New Roman")
 
-std_status = Text(app, text="", grid=[0,3], align="left", size=15, font="Times New Roman")
-std_bal = Text(app, text="", grid=[0,4], align="left", size=15, font="Times New Roman")
-std_startTime = Text(app, text="", grid=[0,5], align="left", size=15, font="Times New Roman")
+std_status = Text(app, text="", grid=[0,2], align="left", size=15, font="Times New Roman")
+std_bal = Text(app, text="", grid=[0,3], align="left", size=15, font="Times New Roman")
+std_startTime = Text(app, text="", grid=[0,4], align="left", size=15, font="Times New Roman")
 
-coin_title = Text(app, text="", grid=[0,7], align="left", size=40, font="Times New Roman")
-coin_amount = Text(app, text="", grid=[0,8], align="left", size=15, font="Times New Roman")
+rent_hours = Text(app, text="", grid=[1,1], align="left", size=15, font="Times New Roman")
+rent_fee = Text(app, text="", grid=[1,2], align="left", size=15, font="Times New Roman")
+rent_dmg = Text(app, text="", grid=[1,3], align="left", size=15, font="Times New Roman")
+rent_endTime = Text(app, text="", grid=[1,4], align="left", size=15, font="Times New Roman")
 
-umbrella_title = Text(app, text="", grid=[0,9], align="left", size=40, font="Times New Roman")
-umbrella_msg = Text(app, text="", grid=[0,10], align="left", size=15, font="Times New Roman")
+coin_title = Text(app, text="", grid=[0,5], align="left", size=30, font="Times New Roman")
+coin_amount = Text(app, text="", grid=[0,6], align="left", size=15, font="Times New Roman")
+
+umbrella_title = Text(app, text="", grid=[0,7], align="left", size=30, font="Times New Roman")
+umbrella_msg = Text(app, text="", grid=[0,8], align="left", size=15, font="Times New Roman")
+
+text_dmg_handle = Text(app, text="", grid=[0,9], align="left", size=15, font="Times New Roman")
+text_dmg_canopy = Text(app, text="", grid=[0,10], align="left", size=15, font="Times New Roman")
+text_dmg_frame = Text(app, text="", grid=[0,11], align="left", size=15, font="Times New Roman")
+text_dmg_runner = Text(app, text="", grid=[0,12], align="left", size=15, font="Times New Roman")
+text_dmg_rib = Text(app, text="", grid=[0,13], align="left", size=15, font="Times New Roman")
+text_dmg_button = Text(app, text="", grid=[0,14], align="left", size=15, font="Times New Roman")
+text_dmg_shaft = Text(app, text="", grid=[0,15], align="left", size=15, font="Times New Roman")
+
+choice_dmg_handle = ButtonGroup(app, grid=[1,9], horizontal=True,options=["0", "1", "2", "3"], selected="0")
+choice_dmg_canopy = ButtonGroup(app, grid=[1,10], horizontal=True,options=["0", "1", "2", "3"], selected="0")
+choice_dmg_frame = ButtonGroup(app, grid=[1,11], horizontal=True,options=["0", "1", "2", "3"], selected="0")
+choice_dmg_runner = ButtonGroup(app, grid=[1,12], horizontal=True,options=["0", "1", "2", "3"], selected="0")
+choice_dmg_rib = ButtonGroup(app, grid=[1,13], horizontal=True,options=["0", "1", "2", "3"], selected="0")
+choice_dmg_button = ButtonGroup(app, grid=[1,14], horizontal=True,options=["0", "1", "2", "3"], selected="0")
+choice_dmg_shaft = ButtonGroup(app, grid=[1,15], horizontal=True,options=["0", "1", "2", "3"], selected="0")
+
+btn_continue = PushButton(app, grid=[1,16], text="Continue")
+
+damage_choices(0)
 
 def resetGUI():
     title_msg.value = ""
@@ -283,6 +384,13 @@ def resetGUI():
     coin_amount.value = ""
     umbrella_title.value = ""
     umbrella_msg.value = ""
+    
+    damage_choices(0)
+    
+    rent_hours.value = ""
+    rent_fee.value = ""
+    rent_dmg.value = ""
+    rent_endTime.value = ""
 
 while(True):
     title_msg.value = "Please Scan Student ID..."
@@ -304,16 +412,12 @@ while(True):
         
         #No Umbrella Rent
         if(stdStatus==0):
-            coin_title.value = "Please Insert Coin(s)"
             amountInsert = insertCoin(stdBal, 5)
-            print("amountInsert Final: " + str(amountInsert))
-            coin_title.value = ""
-            coin_amount.value = "PHP " + str(amountInsert) + " inserted"
-            
+            print("amountInsert Final: " + str(amountInsert))            
             
             now = datetime.now()
             startTime = now.strftime("%d/%m/%y %H:%M:%S")
-            sendArduinoDispense()
+            #sendArduinoDispense()
             
             std_startTime.value = "Rent Start Time: " + str(startTime)
             
@@ -338,15 +442,21 @@ while(True):
         #Existing Umbrella Rent
         elif(stdStatus==1):
             print("\nPlease Scan Umbrella QR..")
+            umbrella_title.value = "Please Scan Umbrella QR..."
             scanCode = scanQR()
-
+            umbrella_msg.value = "Umbrella ID: " + str(scanCode)
+            
+            umbrella_title.value = "Verifying QR..."
             while(isUmbrella(scanCode)==0):
                 print("\nPlease Scan Umbrella QR..")
-                scanCode = scanQR()   
-        
+                umbrella_title.value = "Please Scan Umbrella QR..."
+                scanCode = scanQR() 
+                umbrella_msg.value = "Umbrella ID: " + str(scanCode)  
+            umbrella_title.value = "Umbrella QR Code Accepted"
+            
             dmg_fee = checkUmbrellaDamage()
             print("Return Umbrella")
-            readArduino()
+            #readArduino()
             now = datetime.now()
             endTime = now.strftime("%d/%m/%y %H:%M:%S")
             totalFee = checkout(dmg_fee, startTime, endTime)
@@ -358,8 +468,10 @@ while(True):
         
     
     print("\nThank You for Using Umbrella Rent..")
+    sleep(3)
     resetGUI()
     title_msg.value = "Transaction Complete"
+    app.update()
     sleep(3)
     resetGUI()
 
