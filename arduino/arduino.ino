@@ -25,15 +25,7 @@ const int echoPin4 = A1;
 Servo servo1;
 Servo servo2;
 
-// Variables to control the motor and servos
-bool motorRunning = false;
-bool servo1Moving = false;
-bool servo2Moving = false;
-unsigned long servo1StartTime = 0;
-unsigned long motorStartTime = 0;
-int dispense = 0;
-
-int currentCommand = 1;
+int currentCommand = -1;
 
 void setup() {
   // Motor Driver Setup
@@ -76,8 +68,7 @@ void loop() {
   }
 
   else if(currentCommand == 1){
-    int distance = readUltrasonicSensor(trigPin2, echoPin2);
-    Serial.println(distance);
+    readUltrasonicSensor2();
     currentCommand = -1;
   }
 
@@ -165,7 +156,7 @@ void moveReturningServo(int angle) {
   servo2.write(angle);
 }
 
-int readUltrasonicSensor(int trigPin, int echoPin) {
+float readUltrasonicSensor(int trigPin, int echoPin) {
   /*
   * Get distance from specific ultrasonic sensor
   */
@@ -180,4 +171,16 @@ int readUltrasonicSensor(int trigPin, int echoPin) {
   float distance = duration * 0.034 / 2;
 
   return distance;
+}
+
+void readUltrasonicSensor2(){
+  digitalWrite(trigPin2, LOW);
+  delayMicroseconds(2);
+  digitalWrite(trigPin2, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(trigPin2, LOW);
+
+  float duration = pulseIn(echoPin2, HIGH);
+  float distance = (duration * 0.034) / 2;
+  Serial.println(distance);
 }
