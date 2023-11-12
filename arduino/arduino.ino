@@ -62,24 +62,25 @@ void loop() {
   }
 
   else if(currentCommand == 0){
-    int distance = readUltrasonicSensor(trigPin1, echoPin1);
+    float distance = readUltrasonicSensor(trigPin1, echoPin1);
     Serial.println(distance);
     currentCommand = -1;
   }
 
   else if(currentCommand == 1){
-    readUltrasonicSensor2();
+    float distance = readUltrasonicSensor(trigPin2, echoPin2);
+    Serial.println(distance);
     currentCommand = -1;
   }
 
   else if(currentCommand == 2){
-    int distance = readUltrasonicSensor(trigPin3, echoPin3);
+    float distance = readUltrasonicSensor(trigPin3, echoPin3);
     Serial.println(distance);
     currentCommand = -1;
   }
 
   else if(currentCommand == 3){
-    int distance = readUltrasonicSensor(trigPin4, echoPin4);
+    float distance = readUltrasonicSensor(trigPin4, echoPin4);
     Serial.println(distance);
     currentCommand = -1;
   }
@@ -171,16 +172,4 @@ float readUltrasonicSensor(int trigPin, int echoPin) {
   float distance = duration * 0.034 / 2;
 
   return distance;
-}
-
-void readUltrasonicSensor2(){
-  digitalWrite(trigPin2, LOW);
-  delayMicroseconds(2);
-  digitalWrite(trigPin2, HIGH);
-  delayMicroseconds(10);
-  digitalWrite(trigPin2, LOW);
-
-  float duration = pulseIn(echoPin2, HIGH);
-  float distance = (duration * 0.034) / 2;
-  Serial.println(distance);
 }
