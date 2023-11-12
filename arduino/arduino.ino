@@ -1,26 +1,26 @@
 #include <Servo.h>
 
 // Motor Driver
-#define enA 10 // PWM
-#define in1 9  // IN1
-#define in2 8  // IN2
+const int enA = 10 // PWM
+const int in1 =  9  // IN1
+const int in2 = 8  // IN2
 
 // Servo
-#define servo1 12
-#define servo2 13
+const int servo1  = 12
+const int servo2  = 13
 
 // Ultrasonic
-#define trigPin1 2
-#define echoPin1 3
+const int trigPin1 = 2
+const int echoPin1 = 3
 
-#define trigPin2 4
-#define echoPin2 5
+const int trigPin2 = 4
+const int echoPin2 = 5
 
-#define trigPin3 6
-#define echoPin3 7
+const int trigPin3 = 6
+const int echoPin3 = 7
 
-#define trigPin4 A0
-#define echoPin4 A1
+const int trigPin4 = A0
+const int echoPin4 = A1
 
 Servo servo1;
 Servo servo2;
