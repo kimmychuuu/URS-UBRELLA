@@ -175,9 +175,9 @@ int readUltrasonicSensor(int trigPin, int echoPin) {
   delayMicroseconds(10);
   digitalWrite(trigPin, LOW);
 
-  long duration = pulseIn(echoPin, HIGH);
+  float duration = pulseIn(echoPin, HIGH);
 
-  int distance = duration * 0.034 / 2;
+  float distance = duration * 0.034 / 2;
 
   return distance;
 }
