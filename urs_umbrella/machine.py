@@ -84,7 +84,7 @@ class Machine:
             '4': 3,
         }
 
-        self.send_command(commands[ultrasonic_number])
+        self.send_command(commands[str(ultrasonic_number)])
         while True:
             response = self.get_arduino_response()
             if response:

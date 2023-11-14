@@ -58,7 +58,6 @@ void setup() {
 void loop() { 
   if(currentCommand == -1){
     receiveCommand();
-    currentCommand = -1;
   }
 
   else if(currentCommand == 0){
@@ -96,7 +95,7 @@ void loop() {
   }
 
   else if(currentCommand == 6){
-    moveDispensingServo(100); 
+    moveDispensingServo(180); 
     currentCommand = -1;
   }
 
@@ -106,7 +105,7 @@ void loop() {
   }
 
   else if(currentCommand == 8){
-    moveReturningServo(100);
+    moveReturningServo(180);
     currentCommand = -1;
   }
   
