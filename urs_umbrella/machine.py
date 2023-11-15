@@ -1,18 +1,23 @@
-from .sim808 import Sim808
-
 import serial
 import RPi.GPIO as GPIO
+import datetime
+
+from .sim808 import Sim808
+from .database_api import DatabaseApi
+from inputimeout import inputimeout
 
 class Machine:
 
 
-    def __init__(self, arduino_port: str, sim808_port: str):
+    def __init__(self, arduino_port: str, sim808_port: str, api_url: str, api_key: str):
         '''
         Initialize the main machine class
 
         Parameters:
         arduino_port (str) : Port of Arduino UNO
         sim808_port (str) : Port of GSM SIM808
+        api_url (str) : Database API base url
+        api_key (str) : API key
         '''
         self.arduino = serial.Serial(arduino_port, 9600, timeout=1)
         self.available_commands = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
@@ -24,6 +29,7 @@ class Machine:
         GPIO.add_event_detect(coin_pin, GPIO.FALLING, callback=self._increment_inserted_coin, bouncetime=500)
 
         self.sim808 = Sim808(sim808_port)
+        self.database = DatabaseApi(api_url, api_key)
 
 
 
@@ -175,6 +181,137 @@ class Machine:
 
 
 
+    def validate_user(self, user_id: str) -> bool:
+        '''
+        Validate a user if account exists
+
+        Parameters:
+        user_id (str) : User ID
+
+        Returns:
+        valid (bool) : Validity
+        '''
+        return self.database.validate_user(user_id)
+
+
+
+    def get_data(self, user_id: str) -> dict:
+        '''
+        Get user data
+
+        Parameters:
+        user_id (str) : User ID
+
+        Returns:
+        data (dict) : User data
+        '''
+        return self.database.get_data(user_id)
+    
+
+
+    def check_availability(self, user_id: str) -> bool:
+        '''
+        Check if user is available to rent or not
+
+        Parameters:
+        user_id (str) : User ID
+
+        Returns:
+        availability (bool) : Available or not
+        '''
+        return self.database.check_availability(user_id)
+    
+
+
+    def get_balance(self, user_id: str) -> float:
+        '''
+        Get user balance
+
+        Parameters:
+        user_id (str) : User ID
+
+        Returns:
+        balance (float) : User available credits
+        '''
+        return self.database.get_balance(user_id)
+
+
+
+    def add_balance(self, user_id: str, amount: float):
+        '''
+        Add amount to user balance
+
+        Parameters:
+        user_id (str) : User ID
+        amount (float) : Balance to add
+        '''
+        return self.database.get_balance(user_id, amount)
+
+
+
+    def deduct_balance(self, user_id: str, amount: float):
+        '''
+        Deduct amount to user balance
+
+        Parameters:
+        user_id (str) : User ID
+        amount (float) : Balance to deduct
+        '''
+        return self.database.deduct_balance(user_id, amount)
+    
+
+
+    def update_balance(self, user_id: str, balance: float):
+        '''
+        Deduct amount to user balance
+
+        Parameters:
+        user_id (str) : User ID
+        balance (float) : Balance to update
+        '''
+        return self.database.update_balance(user_id, balance)
+    
+
+
+    def reset_balance(self, user_id: str):
+        '''
+        Deduct amount to user balance
+
+        Parameters:
+        user_id (str) : User ID
+        '''
+        return self.database.reset_balance(user_id)
+    
+
+
+    def rent_umbrella(self, user_id: str, rented_at: datetime.datetime):
+        '''
+        Save rent transaction
+
+        Parameter:
+        user_id (str) : User ID
+        rented_at (datetime.datetime) : Datetime rented
+        '''
+        return self.database.rent_umbrella(user_id, rented_at)
+    
+
+
+    def return_umbrella(self, user_id: str, 
+                        returned_at: datetime.datetime, 
+                        rent_fee: float, 
+                        damage_fee: float):
+        '''
+        Save return transaction
+
+        Parameter:
+        user_id (str) : User ID
+        returned_at (datetime.datetime) : Datetime returned
+        rent_fee (float) : Base rent fee
+        damage_fee (float) : Additional damage fee
+        '''
+        return self.database.return_umbrella(user_id, returned_at, rent_fee, damage_fee)
+
+
 
     #################################################
     #                                               #
@@ -194,3 +331,33 @@ class Machine:
         '''
         return self.sim808.send_sms(number, message)
     
+
+
+    #################################################
+    #                                               #
+    #           QRCODE SCANNER FUNCTIONS            #
+    #                                               #
+    #################################################
+
+
+
+    def scan_qrcode(self, wait_time: float = 0):
+        '''
+        Scan QRCode. Wait time indicates timeout.
+        If timeout is <= 0, wait indefinitely
+
+        Parameters:
+        wait_time (float) : Timeout
+
+        Returns:
+        data (str) : QRCode data
+        '''
+        qrcode = ''
+        if wait_time <= 0:
+            qrcode = str(input('QR Scanner: '))
+        else:
+            try:
+                qrcode = inputimeout(prompt='QR Scanner', timeout=wait_time)
+            except:
+                qrcode = ''
+        return qrcode
