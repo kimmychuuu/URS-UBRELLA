@@ -183,7 +183,7 @@ class DatabaseApi:
 
 
     
-    def rent_umbrella(self, user_id: str, rented_at: datetime):
+    def rent_umbrella(self, user_id: str, rented_at: datetime, umbrella_uuid):
         '''
         Save rent transaction
 
@@ -194,7 +194,8 @@ class DatabaseApi:
         response = requests.post(f'{self.base_url}/rentUmbrella', {
             'apiKey': self.api_key,
             'idNumber': user_id,
-            'rentedAt': rented_at
+            'rentedAt': rented_at,
+            'umbrellaUUID': umbrella_uuid,
         })
         result = response.json()
         self._validate_result(result)
@@ -202,7 +203,7 @@ class DatabaseApi:
 
 
     def return_umbrella(self, user_id: str, returned_at: datetime, rent_fee: float, 
-                        damage_fee: float):
+                        damage_fee: float, damage_rating: str):
         '''
         Save return transaction
 
@@ -217,7 +218,8 @@ class DatabaseApi:
             'idNumber': user_id,
             'returnedAt': returned_at,
             'rentFee': rent_fee,
-            'damageFee': damage_fee
+            'damageFee': damage_fee,
+            'damageRating': damage_rating,
         })
         result = response.json()
         self._validate_result(result)
