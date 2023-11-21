@@ -93,6 +93,26 @@ class DatabaseApi:
     
 
 
+    def get_latest_transaction(self, user_id: str) -> dict:
+        '''
+        Get users latest transaction
+
+        Parameters:
+        user_id (str) : User ID
+
+        Returns:
+        transaction (dict) : Transaction Details
+        '''
+        response = requests.post(f'{self.base_url}/getLatestTransaction', {
+            'apiKey': self.api_key,
+            'idNumber': user_id,
+        })
+        result = response.json()
+        self._validate_result(result)
+        return result['transaction']
+    
+
+
     def get_balance(self, user_id: str) -> float:
         '''
         Get user balance
@@ -183,12 +203,13 @@ class DatabaseApi:
 
 
     
-    def rent_umbrella(self, user_id: str, rented_at: datetime, umbrella_uuid):
+    def rent_umbrella(self, user_id: str, umbrella_uuid: str, rented_at: datetime):
         '''
         Save rent transaction
 
         Parameter:
         user_id (str) : User ID
+        umbrella_uuid (str) : Umbrella UUID
         rented_at (datetime.datetime) : Datetime rented
         '''
         response = requests.post(f'{self.base_url}/rentUmbrella', {

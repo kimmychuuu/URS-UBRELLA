@@ -1,6 +1,7 @@
 import serial
 import RPi.GPIO as GPIO
 import datetime
+import time
 
 from .sim808 import Sim808
 from .database_api import DatabaseApi
@@ -24,12 +25,16 @@ class Machine:
         self.inserted_coins = 0
 
         coin_pin = 10
+        self.accepting_coin = False
+        self.sleep_after_command = 1
         GPIO.setmode(GPIO.BOARD)
         GPIO.setup(coin_pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
         GPIO.add_event_detect(coin_pin, GPIO.FALLING, callback=self._increment_inserted_coin, bouncetime=500)
 
         self.sim808 = Sim808(sim808_port)
         self.database = DatabaseApi(api_url, api_key)
+
+        self.user = None
 
 
 
@@ -46,6 +51,7 @@ class Machine:
                 self.arduino.write(bytes(str(command)+'\n','utf-8'))
                 response = self.get_arduino_response()
                 if(response == 'ok'):
+                    time.sleep(self.sleep_after_command)
                     break
         else:
             raise Exception('Unknown command')
@@ -90,13 +96,18 @@ class Machine:
             '4': 3,
         }
 
+        distance = 1000
         self.send_command(commands[str(ultrasonic_number)])
         while True:
             response = self.get_arduino_response()
             if response:
-                break
+                try:
+                    distance = float(response)
+                    break
+                except:
+                    pass    
 
-        return float(response)
+        return distance
     
 
 
@@ -160,7 +171,8 @@ class Machine:
         '''
         Used as callback for event detection of coin sensor
         '''
-        self.inserted_coins += 1
+        if self.accepting_coin:
+            self.inserted_coins += 1
 
 
 
@@ -223,6 +235,42 @@ class Machine:
     
 
 
+    def get_latest_transaction(self, user_id: str) -> dict:
+        '''
+        Get users latest transaction
+
+        Parameters:
+        user_id (str) : User ID
+
+        Returns:
+        transaction (dict) : Transaction Details
+        '''
+        return self.database.get_latest_transaction(user_id)
+
+
+
+    def compute_rent_fee(self, start: datetime, end: datetime, rate: float = 5):
+        '''
+        Compute rent fee from start to end based on rate.
+        End should be later than start
+
+        Parameters:
+        start (datetime.datetime) : Start datetime
+        end (datetime.datetime) : End datetime
+        rate (float) : Rate per hour
+
+        Return:
+        rent (float) : Base rent
+        '''
+        if start > end:
+            raise Exception('Invalid datetime ranges')
+        
+        duration = end - start
+        rent = duration * rate
+        return rent
+    
+
+    
     def get_balance(self, user_id: str) -> float:
         '''
         Get user balance
@@ -284,15 +332,16 @@ class Machine:
     
 
 
-    def rent_umbrella(self, user_id: str, rented_at: datetime.datetime):
+    def rent_umbrella(self, user_id: str, umbrella_uuid: str, rented_at: datetime):
         '''
         Save rent transaction
 
         Parameter:
         user_id (str) : User ID
+        umbrella_uuid (str) : Umbrella UUID
         rented_at (datetime.datetime) : Datetime rented
         '''
-        return self.database.rent_umbrella(user_id, rented_at)
+        return self.database.rent_umbrella(user_id, umbrella_uuid, rented_at)
     
 
 
