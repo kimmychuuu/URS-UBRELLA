@@ -270,7 +270,7 @@ class Machine:
         return rent
     
 
-    
+
     def get_balance(self, user_id: str) -> float:
         '''
         Get user balance
@@ -348,7 +348,8 @@ class Machine:
     def return_umbrella(self, user_id: str, 
                         returned_at: datetime.datetime, 
                         rent_fee: float, 
-                        damage_fee: float):
+                        damage_fee: float,
+                        damage_rating: str):
         '''
         Save return transaction
 
@@ -357,8 +358,9 @@ class Machine:
         returned_at (datetime.datetime) : Datetime returned
         rent_fee (float) : Base rent fee
         damage_fee (float) : Additional damage fee
+        damage_rating (str) : Damage rating / level
         '''
-        return self.database.return_umbrella(user_id, returned_at, rent_fee, damage_fee)
+        return self.database.return_umbrella(user_id, returned_at, rent_fee, damage_fee, damage_rating)
 
 
 

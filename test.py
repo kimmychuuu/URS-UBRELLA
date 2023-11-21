@@ -19,7 +19,9 @@ if not rent_available:
     # Handle for returning
     umbrella_uuid = machine.scan_qrcode()
     returned_at = datetime.now()
-    rent_fee = machine.get_rent_fee(returned_at)
+    rent_date = machine.get_latest_transaction()['rented_at']
+    rent_date = datetime.strptime(rent_date, '%Y-%m-%d %H:%M:%S')
+    rent_fee = machine.compute_rent_fee(rent_date, returned_at)
 
     # Handle damage rating
     damage_rating = 'None'
@@ -29,7 +31,7 @@ if not rent_available:
     while machine.inserted_coins < total_payment:
         pass
     else:
-        extra = machine.inserted_coins - 5
+        extra = machine.inserted_coins - total_payment
         machine.add_balance(id_number, extra)
         machine.reset_inserted_coins()
 
@@ -42,7 +44,7 @@ if not rent_available:
         pass
     machine.close_returning_servo()
     machine.stop_motor()
-    machine.return_umbrella(id_number, returned_at, rent_fee, damage_fee)
+    machine.return_umbrella(id_number, returned_at, rent_fee, damage_fee, damage_rating)
     
 
 else:

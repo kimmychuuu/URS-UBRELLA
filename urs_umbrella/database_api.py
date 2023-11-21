@@ -233,6 +233,7 @@ class DatabaseApi:
         returned_at (datetime.datetime) : Datetime returned
         rent_fee (float) : Base rent fee
         damage_fee (float) : Additional damage fee
+        damage_rating (str) : Damage rating / level
         '''
         response = requests.post(f'{self.base_url}/returnUmbrella', {
             'apiKey': self.api_key,
