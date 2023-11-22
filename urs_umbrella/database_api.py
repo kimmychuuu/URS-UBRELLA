@@ -48,8 +48,11 @@ class DatabaseApi:
         })
 
         result = response.json()
-        self._validate_result(result)
-        return True
+        try:
+            self._validate_result(result)
+            return True
+        except:
+            return False
         
 
 
