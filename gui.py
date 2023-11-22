@@ -14,7 +14,7 @@ class Root(tk.Tk):
 
     def __init__(self):
         super().__init__()
-        self.title('Medbot')
+        self.title('URS')
         self.geometry('1030x540')
         self.resizable(False, False)
 
@@ -44,6 +44,12 @@ class Root(tk.Tk):
             child.destroy()
         deposit_page = RentPage(self, bg='#FEA633')
         deposit_page.pack()
+
+    def show_return_page(self):
+        for child in self.winfo_children():
+            child.destroy()
+        return_page = ReturnPage(self, bg='#1B1E2D')
+        return_page.pack()
 
 
 
@@ -146,9 +152,11 @@ class ScanPage(tk.Canvas):
         #         self.machine.user = user_id
         #         break
         # rent_available = self.machine.check_availability(user_id)
-        rent_available = True
+        rent_available = False
         if rent_available:
             self.root.show_rent_page()
+        else:
+            self.root.show_return_page()
         
 
 
@@ -226,6 +234,93 @@ class RentPage(tk.Canvas):
         self.after(3000, self.root.show_home_page)
         messagebox.showinfo('Success', 'Transaction Completed', parent=self)
 
+
+
+class ReturnPage(tk.Canvas):
+    def __init__(self, root: Root, **kwargs):
+        super().__init__(root, width=1024, height=600, **kwargs)
+        self.root = root
+
+        self.umbrella_logo_file = Image.open('assets/logo.png').resize((128, 128))
+        self.umbrella_logo_image = ImageTk.PhotoImage(self.umbrella_logo_file)
+        self.create_image(15, 15, image=self.umbrella_logo_image, anchor=tk.NW)
+
+        self.create_text(140, 40, text='Umbrella Renting Machine', font=('Montserrat', 34, 'bold'), fill='white', anchor=tk.NW)
+        self.create_text(150, 90, text='You matter the most under the umbrella', font=('Montserrat', 18, 'bold'), fill='white', anchor=tk.NW)
+
+        self.deposit_file = Image.open('assets/assess.png').resize((350, 350))
+        self.deposit_image = ImageTk.PhotoImage(self.deposit_file)
+        self.create_image(30, 140, image=self.deposit_image, anchor=tk.NW)
+
+        self.container_file = Image.open('assets/container.png').resize((620, 350))
+        self.container_image = ImageTk.PhotoImage(self.container_file)
+        self.create_image(400, 140, image=self.container_image, anchor=tk.NW)
+
+        self.create_text(640, 175, text='None', font=('Montserrat', 14, 'bold'), fill='black')
+        self.create_text(730, 175, text='Minor', font=('Montserrat', 14, 'bold'), fill='black')
+        self.create_text(830, 175, text='Moderate', font=('Montserrat', 14, 'bold'), fill='black')
+        self.create_text(930, 175, text='Sever', font=('Montserrat', 14, 'bold'), fill='black')
+
+        self.create_text(450, 210, text='Handle Damage', font=('Montserrat', 14), fill='black', anchor=tk.NW)
+        self.create_text(450, 250, text='Canopy Damage', font=('Montserrat', 14), fill='black', anchor=tk.NW)
+        self.create_text(450, 290, text='Runner Damage', font=('Montserrat', 14), fill='black', anchor=tk.NW)
+        self.create_text(450, 330, text='Rib Damage', font=('Montserrat', 14), fill='black', anchor=tk.NW)
+        self.create_text(450, 370, text='Button Damage', font=('Montserrat', 14), fill='black', anchor=tk.NW)
+        self.create_text(450, 410, text='Shaft Damage', font=('Montserrat', 14), fill='black', anchor=tk.NW)
+        
+        handle_damage = tk.IntVar()
+        canopy_damage = tk.IntVar()
+        runner_damage = tk.IntVar()
+        rib_damage = tk.IntVar()
+        button_damage = tk.IntVar()
+        shaft_damage = tk.IntVar()
+        handle_damage.set(0)
+        canopy_damage.set(0)
+        runner_damage.set(0)
+        rib_damage.set(0)
+        button_damage.set(0)
+        shaft_damage.set(0)
+
+        tk.Radiobutton(self, variable=handle_damage, value=0, bg='white').place(x=630, y=210)
+        tk.Radiobutton(self, variable=handle_damage, value=1, bg='white').place(x=720, y=210)
+        tk.Radiobutton(self, variable=handle_damage, value=2, bg='white').place(x=820, y=210)
+        tk.Radiobutton(self, variable=handle_damage, value=3, bg='white').place(x=920, y=210)
+
+        tk.Radiobutton(self, variable=canopy_damage, value=0, bg='white').place(x=630, y=250)
+        tk.Radiobutton(self, variable=canopy_damage, value=1, bg='white').place(x=720, y=250)
+        tk.Radiobutton(self, variable=canopy_damage, value=2, bg='white').place(x=820, y=250)
+        tk.Radiobutton(self, variable=canopy_damage, value=3, bg='white').place(x=920, y=250)
+
+        tk.Radiobutton(self, variable=runner_damage, value=0, bg='white').place(x=630, y=290)
+        tk.Radiobutton(self, variable=runner_damage, value=1, bg='white').place(x=720, y=290)
+        tk.Radiobutton(self, variable=runner_damage, value=2, bg='white').place(x=820, y=290)
+        tk.Radiobutton(self, variable=runner_damage, value=3, bg='white').place(x=920, y=290)
+
+        tk.Radiobutton(self, variable=rib_damage, value=0, bg='white').place(x=630, y=330)
+        tk.Radiobutton(self, variable=rib_damage, value=1, bg='white').place(x=720, y=330)
+        tk.Radiobutton(self, variable=rib_damage, value=2, bg='white').place(x=820, y=330)
+        tk.Radiobutton(self, variable=rib_damage, value=3, bg='white').place(x=920, y=330)
+
+        tk.Radiobutton(self, variable=button_damage, value=0, bg='white').place(x=630, y=370)
+        tk.Radiobutton(self, variable=button_damage, value=1, bg='white').place(x=720, y=370)
+        tk.Radiobutton(self, variable=button_damage, value=2, bg='white').place(x=820, y=370)
+        tk.Radiobutton(self, variable=button_damage, value=3, bg='white').place(x=920, y=370)
+
+        tk.Radiobutton(self, variable=shaft_damage, value=0, bg='white').place(x=630, y=410)
+        tk.Radiobutton(self, variable=shaft_damage, value=1, bg='white').place(x=720, y=410)
+        tk.Radiobutton(self, variable=shaft_damage, value=2, bg='white').place(x=820, y=410)
+        tk.Radiobutton(self, variable=shaft_damage, value=3, bg='white').place(x=920, y=410)
+
+        self.proceed_file = Image.open('assets/proceed_button.png').resize((215, 60))
+        self.proceed_image = ImageTk.PhotoImage(self.proceed_file)
+        self.proceed_button = self.create_image(750, 450, image=self.proceed_image, anchor=tk.NW)
+        self.tag_bind(self.proceed_button, "<Button-1>", self.assess_damage)
+
+    def assess_damage(self, event):
+        # Insert damage assessment logic
+        # save damage assessment to a variable as this is needed later on
+        # self.machine.damage_rating = rating
+        pass
 
 if __name__ == '__main__':
     # machine = Machine()
