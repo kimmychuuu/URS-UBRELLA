@@ -51,6 +51,18 @@ class Root(tk.Tk):
         return_page = ReturnPage(self, bg='#1B1E2D')
         return_page.pack()
 
+    def show_payment_page(self, details):
+        for child in self.winfo_children():
+            child.destroy()
+        payment_page = PaymentPage(self, details=details, bg='#1B1E2D')
+        payment_page.pack()
+
+    def show_thankyou_page(self):
+        for child in self.winfo_children():
+            child.destroy()
+        thankyou_page = ThankYouPage(self, bg='#52B2B0')
+        thankyou_page.pack()
+
 
 
 class Homepage(tk.Canvas):
@@ -142,8 +154,7 @@ class ScanPage(tk.Canvas):
         self.tag_bind(self.proceed_button, "<Button-1>", self.proceed)
 
     def proceed(self, event):
-        # Insert scan logic
-        # Then check if valid, if not valid show message then retry scan
+        # Check if qr is valid, if not valid show message then retry scan
         # valid = False
         # while not valid:
         #     user_id = self.machine.scan_qrcode()
@@ -230,9 +241,9 @@ class RentPage(tk.Canvas):
         # Insert scan logic
         # Insert save logic
         # time.sleep is only temporary
+        # logout user
         time.sleep(5)
-        self.after(3000, self.root.show_home_page)
-        messagebox.showinfo('Success', 'Transaction Completed', parent=self)
+        self.root.show_thankyou_page()
 
 
 
@@ -320,7 +331,82 @@ class ReturnPage(tk.Canvas):
         # Insert damage assessment logic
         # save damage assessment to a variable as this is needed later on
         # self.machine.damage_rating = rating
-        pass
+        # compute for the total payment
+        transaction_details = {
+
+        }
+        self.root.show_payment_page(transaction_details)
+
+
+
+class PaymentPage(tk.Canvas):
+    def __init__(self, root: Root, details: dict, **kwargs):
+        super().__init__(root, width=1024, height=600, **kwargs)
+        self.root = root
+
+        self.umbrella_logo_file = Image.open('assets/logo.png').resize((128, 128))
+        self.umbrella_logo_image = ImageTk.PhotoImage(self.umbrella_logo_file)
+        self.create_image(15, 15, image=self.umbrella_logo_image, anchor=tk.NW)
+
+        self.create_text(140, 40, text='Umbrella Renting Machine', font=('Montserrat', 34, 'bold'), fill='white', anchor=tk.NW)
+        self.create_text(150, 90, text='You matter the most under the umbrella', font=('Montserrat', 18, 'bold'), fill='white', anchor=tk.NW)
+
+        self.container_file = Image.open('assets/container.png').resize((540, 350))
+        self.container_image = ImageTk.PhotoImage(self.container_file)
+        self.create_image(80, 180, image=self.container_image, anchor=tk.NW)
+
+        self.create_text(100, 200, text='Rent Date:           Nov. 12, 2023 11:23:23 AM', font=('Montserrat', 18), fill='black', anchor=tk.NW)
+        self.create_text(100, 235, text='Return Date:        Nov. 12, 2023 03:23:23 PM', font=('Montserrat', 18), fill='black', anchor=tk.NW)
+        self.create_text(100, 270, text='Rent Duration:      4 hours', font=('Montserrat', 18), fill='black', anchor=tk.NW)
+        self.create_text(100, 305, text='Damage Rating:   Minor', font=('Montserrat', 18), fill='black', anchor=tk.NW)
+
+        self.create_text(100, 360, text='Rent Fee:         ₱10', font=('Montserrat', 22, 'bold'), fill='black', anchor=tk.NW)
+        self.create_text(100, 400, text='Damage Fee:   ₱10', font=('Montserrat', 22, 'bold'), fill='black', anchor=tk.NW)
+        self.create_line(100, 450, 590, 450,  width=2)
+        self.create_text(100, 460, text='Total Fee:        ₱10', font=('Montserrat', 22, 'bold'), fill='black', anchor=tk.NW)
+
+        self.create_text(820, 230, text='Insert coins', font=('Montserrat', 22, 'bold'), fill='white', anchor=tk.CENTER)
+
+        self.counter_container_file = Image.open('assets/counter_container.png').resize((256, 256))
+        self.counter_container_image = ImageTk.PhotoImage(self.counter_container_file)
+        self.create_image(820, 390, image=self.counter_container_image, anchor=tk.CENTER)
+
+        counter_label = tk.Label(self, text='50', font=('Montserrat', 96, 'bold'), bg='#D9D9D9', anchor=tk.NW)
+        counter_label.place(x=750, y=310)
+
+        self.after(1000, self.wait_for_payment)
+
+    def wait_for_payment(self):
+        # Insert wait for payment logic
+        time.sleep(5)
+        self.root.show_thankyou_page()
+
+
+class ThankYouPage(tk.Canvas):
+    def __init__(self, root: Root, **kwargs):
+        super().__init__(root, width=1024, height=600, **kwargs)
+        self.root = root
+
+        self.umbrella_logo_file = Image.open('assets/logo.png').resize((128, 128))
+        self.umbrella_logo_image = ImageTk.PhotoImage(self.umbrella_logo_file)
+        self.create_image(15, 15, image=self.umbrella_logo_image, anchor=tk.NW)
+
+        self.create_text(140, 40, text='Umbrella Renting Machine', font=('Montserrat', 34, 'bold'), fill='white', anchor=tk.NW)
+        self.create_text(150, 90, text='You matter the most under the umbrella', font=('Montserrat', 18, 'bold'), fill='white', anchor=tk.NW)
+
+        self.container_file = Image.open('assets/container.png').resize((980, 260))
+        self.container_image = ImageTk.PhotoImage(self.container_file)
+        self.create_image(515, 300, image=self.container_image, anchor=tk.CENTER)
+
+        self.create_text(515, 300, text='Thank you for using Umbrella Renting System', font=('Montserrat', 26, 'bold'), fill='black', anchor=tk.CENTER)
+
+        self.after(2000, self.return_to_homepage)
+
+    def return_to_homepage(self):
+        time.sleep(3)
+        self.root.show_home_page()
+
+
 
 if __name__ == '__main__':
     # machine = Machine()
