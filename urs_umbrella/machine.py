@@ -183,6 +183,22 @@ class Machine:
         '''
         self.inserted_coins = 0
 
+
+    
+    def set_current_user(self, user_id):
+        '''
+        Set current user to user ID
+        '''
+        self.user = user_id
+
+
+
+    def logout(self):
+        '''
+        Set user to None
+        '''
+        self.user = None
+
     
 
     #################################################

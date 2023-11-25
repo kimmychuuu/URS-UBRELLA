@@ -1,7 +1,6 @@
-from urs_umbrella import Machine
+# from urs_umbrella import Machine
 import tkinter as tk
 import time
-import statistics
 
 from tkinter import ttk as ttk
 from tkinter import messagebox  as messagebox
@@ -13,12 +12,11 @@ class Root(tk.Tk):
     # Initialize the GUI
     current_language = 'English'
 
-    def __init__(self, machine: Machine):
+    def __init__(self):
         super().__init__()
         self.title('URS')
         self.geometry('1030x540')
         self.resizable(False, False)
-        self.machine = machine
 
         self.show_home_page()
         self.mainloop()
@@ -149,22 +147,23 @@ class ScanPage(tk.Canvas):
         prompt = 'Place your student I.D.\nin front of the QR code\nScanner'
         self.create_text(520, 240, text=prompt, font=('Montserrat', 28, 'bold'), fill='white', anchor=tk.NW)
 
-        self.after(1000, self.proceed)
+        # Temporary should handle the proceeding to next page via scan handler
+        self.proceed_file = Image.open('assets/proceed_button.png').resize((215, 60))
+        self.proceed_image = ImageTk.PhotoImage(self.proceed_file)
+        self.proceed_button = self.create_image(700, 425, image=self.proceed_image, anchor=tk.NW)
+        self.tag_bind(self.proceed_button, "<Button-1>", self.proceed)
 
     def proceed(self, event):
         # Check if qr is valid, if not valid show message then retry scan
-        valid = False
-        while not valid:
-            user_id = self.root.machine.scan_qrcode()
-            valid = self.root.machine.validate_user(user_id)
-            if valid:
-                self.root.machine.set_current_user(user_id)
-                break
-            else:
-                if not messagebox.askretrycancel('Invalid QR Code', 'User ID not found. Retry scanning?', parent=self):
-                    self.root.show_home_page()
-
-        rent_available = self.root.machine.check_availability(user_id)
+        # valid = False
+        # while not valid:
+        #     user_id = self.machine.scan_qrcode()
+        #     valid = self.machine.validate_user(user_id)
+        #     if valid:
+        #         self.machine.user = user_id
+        #         break
+        # rent_available = self.machine.check_availability(user_id)
+        rent_available = False
         if rent_available:
             self.root.show_rent_page()
         else:
@@ -199,40 +198,34 @@ class RentPage(tk.Canvas):
         self.scan_file = Image.open('assets/scan.png').resize((350, 350))
         self.scan_image = ImageTk.PhotoImage(self.scan_file)
 
-        self.after(1000, self.deposit)
+        # Temporary should handle the proceeding to next page via deposit handler
+        self.proceed_file = Image.open('assets/proceed_button.png').resize((215, 60))
+        self.proceed_image = ImageTk.PhotoImage(self.proceed_file)
+        self.proceed_button = self.create_image(700, 425, image=self.proceed_image, anchor=tk.NW)
+        self.tag_bind(self.proceed_button, "<Button-1>", self.dispense_umbrella)
+
+        # Call deposit directly instead of button
+        # self.deposit()
 
     def deposit(self):
-        self.root.machine.accepting_coin = True
-        deposit_amount = 5
-        while self.root.machine.inserted_coins < deposit_amount:
-            pass
-        else:
-            extra = self.root.machine.inserted_coins - deposit_amount
-            self.root.machine.add_balance(self.root.machine.user, extra)
-            self.root.machine.reset_inserted_coins()
-        self.root.machine.accepting_coin = False
+        # Insert deposit logic then call dispense umbrella
         self.dispense_umbrella()
 
-    def dispense_umbrella(self):
+    # remove event param
+    def dispense_umbrella(self, event):
         self.delete(self.image_placeholder)
         self.delete(self.title_label)
         self.delete(self.subtitle_label)
         self.image_placeholder = self.create_image(145, 140, image=self.dispense_image, anchor=tk.NW)
         self.title_label = self.create_text(540, 190, text='Please wait for the\numbrella to be dispensed', font=('Montserrat', 28, 'bold'), fill='white', anchor=tk.NW)
         self.subtitle_label = self.create_text(540, 280, text='This may take a moment.', font=('Montserrat', 18, 'bold'), fill='black', anchor=tk.NW)
-        
+        # Insert dispense logic
         self.after(1000, self.dispense)
 
     def dispense(self):
-        self.root.machine.start_motor()
-        while self.root.machine.get_distance_from_ultrasonic(3) > 30:
-            pass
-        self.root.machine.open_dispensing_servo()
-        while self.root.machine.get_distance_from_ultrasonic(4) > 30:
-            pass
-        self.root.machine.close_dispensing_servo()
-        self.root.machine.stop_motor()
-
+        # Insert dispense logic
+        # time.sleep is only temporary
+        time.sleep(5)
         self.scan_umbrella()
 
     def scan_umbrella(self):
@@ -245,13 +238,11 @@ class RentPage(tk.Canvas):
         self.after(1000, self.scan)
 
     def scan(self):
-        umbrella_uuid = self.root.machine.scan_qrcode()
-        self.root.machine.rent_umbrella(
-            user_id=self.root.machine.user,
-            umbrella_uuid=umbrella_uuid,
-            rented_at=datetime.now(),
-        )
-        self.root.machine.logout()
+        # Insert scan logic
+        # Insert save logic
+        # time.sleep is only temporary
+        # logout user
+        time.sleep(5)
         self.root.show_thankyou_page()
 
 
@@ -288,48 +279,48 @@ class ReturnPage(tk.Canvas):
         self.create_text(450, 370, text='Button Damage', font=('Montserrat', 14), fill='black', anchor=tk.NW)
         self.create_text(450, 410, text='Shaft Damage', font=('Montserrat', 14), fill='black', anchor=tk.NW)
         
-        self.handle_damage = tk.IntVar()
-        self.canopy_damage = tk.IntVar()
-        self.runner_damage = tk.IntVar()
-        self.rib_damage = tk.IntVar()
-        self.button_damage = tk.IntVar()
-        self.shaft_damage = tk.IntVar()
-        self.handle_damage.set(0)
-        self.canopy_damage.set(0)
-        self.runner_damage.set(0)
-        self.rib_damage.set(0)
-        self.button_damage.set(0)
-        self.shaft_damage.set(0)
+        handle_damage = tk.IntVar()
+        canopy_damage = tk.IntVar()
+        runner_damage = tk.IntVar()
+        rib_damage = tk.IntVar()
+        button_damage = tk.IntVar()
+        shaft_damage = tk.IntVar()
+        handle_damage.set(0)
+        canopy_damage.set(0)
+        runner_damage.set(0)
+        rib_damage.set(0)
+        button_damage.set(0)
+        shaft_damage.set(0)
 
-        tk.Radiobutton(self, variable=self.handle_damage, value=0, bg='white').place(x=630, y=210)
-        tk.Radiobutton(self, variable=self.handle_damage, value=1, bg='white').place(x=720, y=210)
-        tk.Radiobutton(self, variable=self.handle_damage, value=2, bg='white').place(x=820, y=210)
-        tk.Radiobutton(self, variable=self.handle_damage, value=3, bg='white').place(x=920, y=210)
+        tk.Radiobutton(self, variable=handle_damage, value=0, bg='white').place(x=630, y=210)
+        tk.Radiobutton(self, variable=handle_damage, value=1, bg='white').place(x=720, y=210)
+        tk.Radiobutton(self, variable=handle_damage, value=2, bg='white').place(x=820, y=210)
+        tk.Radiobutton(self, variable=handle_damage, value=3, bg='white').place(x=920, y=210)
 
-        tk.Radiobutton(self, variable=self.canopy_damage, value=0, bg='white').place(x=630, y=250)
-        tk.Radiobutton(self, variable=self.canopy_damage, value=1, bg='white').place(x=720, y=250)
-        tk.Radiobutton(self, variable=self.canopy_damage, value=2, bg='white').place(x=820, y=250)
-        tk.Radiobutton(self, variable=self.canopy_damage, value=3, bg='white').place(x=920, y=250)
+        tk.Radiobutton(self, variable=canopy_damage, value=0, bg='white').place(x=630, y=250)
+        tk.Radiobutton(self, variable=canopy_damage, value=1, bg='white').place(x=720, y=250)
+        tk.Radiobutton(self, variable=canopy_damage, value=2, bg='white').place(x=820, y=250)
+        tk.Radiobutton(self, variable=canopy_damage, value=3, bg='white').place(x=920, y=250)
 
-        tk.Radiobutton(self, variable=self.runner_damage, value=0, bg='white').place(x=630, y=290)
-        tk.Radiobutton(self, variable=self.runner_damage, value=1, bg='white').place(x=720, y=290)
-        tk.Radiobutton(self, variable=self.runner_damage, value=2, bg='white').place(x=820, y=290)
-        tk.Radiobutton(self, variable=self.runner_damage, value=3, bg='white').place(x=920, y=290)
+        tk.Radiobutton(self, variable=runner_damage, value=0, bg='white').place(x=630, y=290)
+        tk.Radiobutton(self, variable=runner_damage, value=1, bg='white').place(x=720, y=290)
+        tk.Radiobutton(self, variable=runner_damage, value=2, bg='white').place(x=820, y=290)
+        tk.Radiobutton(self, variable=runner_damage, value=3, bg='white').place(x=920, y=290)
 
-        tk.Radiobutton(self, variable=self.rib_damage, value=0, bg='white').place(x=630, y=330)
-        tk.Radiobutton(self, variable=self.rib_damage, value=1, bg='white').place(x=720, y=330)
-        tk.Radiobutton(self, variable=self.rib_damage, value=2, bg='white').place(x=820, y=330)
-        tk.Radiobutton(self, variable=self.rib_damage, value=3, bg='white').place(x=920, y=330)
+        tk.Radiobutton(self, variable=rib_damage, value=0, bg='white').place(x=630, y=330)
+        tk.Radiobutton(self, variable=rib_damage, value=1, bg='white').place(x=720, y=330)
+        tk.Radiobutton(self, variable=rib_damage, value=2, bg='white').place(x=820, y=330)
+        tk.Radiobutton(self, variable=rib_damage, value=3, bg='white').place(x=920, y=330)
 
-        tk.Radiobutton(self, variable=self.button_damage, value=0, bg='white').place(x=630, y=370)
-        tk.Radiobutton(self, variable=self.button_damage, value=1, bg='white').place(x=720, y=370)
-        tk.Radiobutton(self, variable=self.button_damage, value=2, bg='white').place(x=820, y=370)
-        tk.Radiobutton(self, variable=self.button_damage, value=3, bg='white').place(x=920, y=370)
+        tk.Radiobutton(self, variable=button_damage, value=0, bg='white').place(x=630, y=370)
+        tk.Radiobutton(self, variable=button_damage, value=1, bg='white').place(x=720, y=370)
+        tk.Radiobutton(self, variable=button_damage, value=2, bg='white').place(x=820, y=370)
+        tk.Radiobutton(self, variable=button_damage, value=3, bg='white').place(x=920, y=370)
 
-        tk.Radiobutton(self, variable=self.shaft_damage, value=0, bg='white').place(x=630, y=410)
-        tk.Radiobutton(self, variable=self.shaft_damage, value=1, bg='white').place(x=720, y=410)
-        tk.Radiobutton(self, variable=self.shaft_damage, value=2, bg='white').place(x=820, y=410)
-        tk.Radiobutton(self, variable=self.shaft_damage, value=3, bg='white').place(x=920, y=410)
+        tk.Radiobutton(self, variable=shaft_damage, value=0, bg='white').place(x=630, y=410)
+        tk.Radiobutton(self, variable=shaft_damage, value=1, bg='white').place(x=720, y=410)
+        tk.Radiobutton(self, variable=shaft_damage, value=2, bg='white').place(x=820, y=410)
+        tk.Radiobutton(self, variable=shaft_damage, value=3, bg='white').place(x=920, y=410)
 
         self.proceed_file = Image.open('assets/proceed_button.png').resize((215, 60))
         self.proceed_image = ImageTk.PhotoImage(self.proceed_file)
@@ -337,49 +328,20 @@ class ReturnPage(tk.Canvas):
         self.tag_bind(self.proceed_button, "<Button-1>", self.assess_damage)
 
     def assess_damage(self, event):
-        latest_transaction = self.root.machine.get_latest_transaction(self.root.machine.user)
-        damages = [
-            self.handle_damage.get(),
-            self.canopy_damage.get(),
-            self.runner_damage.get(),
-            self.rib_damage.get(),
-            self.button_damage.get(),
-            self.shaft_damage.get(),
-        ]
-        damage_score = statistics.mean(damages)
-        damage_rating = self.get_damage_interpretation(damage_score)
-        # Not sure how to compute damage fee
-        damage_fee = damage_score * 5
-        rent_date = datetime.strptime(latest_transaction['rented_at'], "%Y-%m-%d %H:%M:%S")
-        return_date = datetime.now()
-        rent_fee = self.root.machine.compute_rent_fee(rent_date, return_date)
+        # Insert damage assessment logic
+        # save damage assessment to a variable as this is needed later on
+        # self.machine.damage_rating = rating
+        # compute for the total payment
         transaction_details = {
-            'rented_at': rent_date,
-            'returned_at': return_date,
-            'duration': self.get_duration(rent_date, return_date),
-            'rent_fee': rent_fee,
-            'damage_rating': damage_rating,
-            'damage_fee': damage_fee,
-            'total_fee': rent_fee + damage_fee
+            'rented_at': datetime.now(),
+            'returned_at': datetime.now(),
+            'duration': '0 days, 3 hours, 3 mins',
+            'rent_fee': 15,
+            'damage_rating': 'Minor',
+            'damage_fee': 10,
+            'total_fee': 25
         }
         self.root.show_payment_page(transaction_details)
-
-    @staticmethod
-    def get_damage_interpretation(value):
-        if value <= 0:
-            return 'None'
-        elif value == 1:
-            return 'Minor'
-        elif value == 2:
-            return 'Moderate'
-        else:
-            return 'Severe'
-        
-    @staticmethod
-    def get_duration(rent_date, return_date) -> str:
-        duration_time = return_date - rent_date
-        duration_string = f'{duration_time.days} days, {duration_time.seconds//3600} hours, {(duration_time.seconds//60)%60} mins'
-        return duration_string
 
 
 
@@ -387,7 +349,6 @@ class PaymentPage(tk.Canvas):
     def __init__(self, root: Root, details: dict, **kwargs):
         super().__init__(root, width=1024, height=600, **kwargs)
         self.root = root
-        self.details = details
 
         self.umbrella_logo_file = Image.open('assets/logo.png').resize((128, 128))
         self.umbrella_logo_image = ImageTk.PhotoImage(self.umbrella_logo_file)
@@ -396,7 +357,7 @@ class PaymentPage(tk.Canvas):
         self.create_text(140, 40, text='Umbrella Renting Machine', font=('Montserrat', 34, 'bold'), fill='white', anchor=tk.NW)
         self.create_text(150, 90, text='You matter the most under the umbrella', font=('Montserrat', 18, 'bold'), fill='white', anchor=tk.NW)
 
-        self.accept_umbrella_file = Image.open('assets/return.png').resize((540, 350))
+        self.accept_umbrella_file = Image.open('assets/return.png').resize((350, 350))
         self.accept_umbrella_image = ImageTk.PhotoImage(self.accept_umbrella_file)
 
         self.container_file = Image.open('assets/container.png').resize((540, 350))
@@ -425,16 +386,9 @@ class PaymentPage(tk.Canvas):
         self.after(1000, self.wait_for_payment)
 
     def wait_for_payment(self):
-        self.root.machine.accepting_coin = True
-        total_payment = self.details['total_fee']
-        while self.root.machine.inserted_coins < total_payment:
-            pass
-        else:
-            extra = self.root.machine.inserted_coins - total_payment
-            self.root.machine.add_balance(self.root.machine.user, extra)
-            self.root.machine.reset_inserted_coins()
-        self.root.machine.accepting_coin = False
-        self.accept_umbrella()
+        # Insert wait for payment logic
+        time.sleep(5)
+        self.after(1000, self.accept_umbrella)
 
     def accept_umbrella(self):
         self.delete(self.container)
@@ -442,26 +396,20 @@ class PaymentPage(tk.Canvas):
         self.delete(self.return_date_label)
         self.delete(self.duration_label)
         self.delete(self.damage_rating_label)
-        self.delete(self.rent_date_label)
+        self.delete(self.rent_fee_label)
         self.delete(self.damage_fee_label)
+        self.delete(self.line)
         self.delete(self.total_fee_label)
         self.delete(self.insert_coin_label)
         self.delete(self.counter_container)
         self.counter_label.destroy()
-        self.image_placeholder = self.create_image(145, 140, image=self.accept_umbrella_image, anchor=tk.NW)
-        self.title_label = self.create_text(560, 190, text='Please return the\numbrella to the machine', font=('Montserrat', 28, 'bold'), fill='white', anchor=tk.NW)
-        self.subtitle_label = self.create_text(540, 280, text='This may take a moment.', font=('Montserrat', 18, 'bold'), fill='black', anchor=tk.NW)
+        self.create_image(145, 140, image=self.accept_umbrella_image, anchor=tk.NW)
+        self.create_text(540, 190, text='Please return the\numbrella to the machine', font=('Montserrat', 28, 'bold'), fill='white', anchor=tk.NW)
+        self.create_text(540, 280, text='This may take a moment.', font=('Montserrat', 18, 'bold'), fill='white', anchor=tk.NW)
         self.after(1000, self.wait_for_umbrella)
 
     def wait_for_umbrella(self):
-        while self.root.machine.get_distance_from_ultrasonic(1) > 30:
-            pass
-        self.root.machine.open_returning_servo()
-        self.root.machine.start_motor()
-        while self.root.machine.get_distance_from_ultrasonic(2) > 30:
-            pass
-        self.root.machine.close_returning_servo()
-        self.root.machine.stop_motor()
+        time.sleep(5)
         self.root.show_thankyou_page()
 
 
@@ -492,5 +440,5 @@ class ThankYouPage(tk.Canvas):
 
 
 if __name__ == '__main__':
-    machine = Machine()
-    root = Root(machine)
+    # machine = Machine()
+    root = Root()
