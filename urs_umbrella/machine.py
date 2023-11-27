@@ -310,7 +310,7 @@ class Machine:
         user_id (str) : User ID
         amount (float) : Balance to add
         '''
-        return self.database.get_balance(user_id, amount)
+        return self.database.add_balance(user_id, amount)
 
 
 
