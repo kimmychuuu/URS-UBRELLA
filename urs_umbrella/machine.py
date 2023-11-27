@@ -2,6 +2,7 @@ import serial
 import RPi.GPIO as GPIO
 import datetime
 import time
+import tkinter.simpledialog as simpledialog
 
 from .sim808 import Sim808
 from .database_api import DatabaseApi
@@ -408,12 +409,13 @@ class Machine:
 
 
 
-    def scan_qrcode(self, wait_time: float = 0):
+    def scan_qrcode(self, gui: bool = False, wait_time: float = 0):
         '''
         Scan QRCode. Wait time indicates timeout.
         If timeout is <= 0, wait indefinitely
 
         Parameters:
+        gui (bool) : GUI mode (default to False)
         wait_time (float) : Timeout
 
         Returns:
@@ -421,7 +423,10 @@ class Machine:
         '''
         qrcode = ''
         if wait_time <= 0:
-            qrcode = str(input('QR Scanner: '))
+            if gui:
+                qrcode = simpledialog.askstring('QR Scanner', 'Scan QR Code')
+            else:
+                qrcode = str(input('QR Scanner: '))
         else:
             try:
                 qrcode = inputimeout(prompt='QR Scanner', timeout=wait_time)

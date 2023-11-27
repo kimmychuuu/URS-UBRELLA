@@ -151,11 +151,11 @@ class ScanPage(tk.Canvas):
 
         self.after(1000, self.proceed)
 
-    def proceed(self, event):
+    def proceed(self):
         # Check if qr is valid, if not valid show message then retry scan
         valid = False
         while not valid:
-            user_id = self.root.machine.scan_qrcode()
+            user_id = self.root.machine.scan_qrcode(gui=True)
             valid = self.root.machine.validate_user(user_id)
             if valid:
                 self.root.machine.set_current_user(user_id)
@@ -492,5 +492,10 @@ class ThankYouPage(tk.Canvas):
 
 
 if __name__ == '__main__':
-    machine = Machine()
+    machine = Machine(
+        arduino_port='',
+        sim808_port='',
+        api_key='',
+        api_url=''
+    )
     root = Root(machine)
