@@ -30,7 +30,7 @@ class Machine:
         self.sleep_after_command = 1
         GPIO.setmode(GPIO.BOARD)
         GPIO.setup(coin_pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-        GPIO.add_event_detect(coin_pin, GPIO.FALLING, callback=self._increment_inserted_coin, bouncetime=500)
+        GPIO.add_event_detect(coin_pin, GPIO.BOTH, callback=self._increment_inserted_coin, bouncetime=500)
 
         self.sim808 = Sim808(sim808_port)
         self.database = DatabaseApi(api_url, api_key)
