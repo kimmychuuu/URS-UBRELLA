@@ -5,6 +5,7 @@ import tkinter.simpledialog as simpledialog
 
 from .sim808 import Sim808
 from .database_api import DatabaseApi
+from .utils import machineutils
 from inputimeout import inputimeout
 from datetime import datetime, timedelta
 
@@ -266,7 +267,7 @@ class Machine:
 
 
 
-    def compute_rent_fee(self, 
+    def compute_rent_fee(self,
                          start: datetime, 
                          end: datetime, 
                          rate: float = 5,
@@ -304,19 +305,16 @@ class Machine:
             duration = timedelta()
 
             while current_datetime < end:
-                current_end_time = min(current_datetime + timedelta(days=1), end)
+                current_end_time = min(current_datetime + timedelta(hours=1), end)
                 current_duration = current_end_time - current_datetime
-                
-                # Check if the current time period falls within the excluded range
-                if not (excluded_start_time <= current_datetime.time() < excluded_end_time or
-                        excluded_start_time <= current_end_time.time() < excluded_end_time):
+                current_time = current_datetime.strftime('%H:%M')
+                if not machineutils.time_falls_between(current_time, excluded_start, excluded_end):
                     duration += current_duration
-                
-                current_datetime += timedelta(days=1)
+                current_datetime += timedelta(hours=1)
 
         hours_rented = duration.total_seconds() / 3600
         rent = hours_rented * rate
-        return rent
+        return rent.__floor__()
     
 
 
@@ -465,3 +463,4 @@ class Machine:
             except:
                 qrcode = ''
         return qrcode
+
