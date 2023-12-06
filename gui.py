@@ -495,9 +495,9 @@ class ThankYouPage(tk.Canvas):
 
 if __name__ == '__main__':
     machine = Machine(
-        arduino_port='',
-        sim808_port='',
-        api_key='',
-        api_url=''
+        arduino_port='/dev/ttyUSB1',
+        sim808_port='/dev/ttyUSB0',
+        api_url='https://ursubrella.online/api',
+        api_key='URSUmbrella@2023'
     )
     root = Root(machine)

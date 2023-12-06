@@ -158,6 +158,11 @@ class Machine:
         '''
         self.send_command(9)
 
+    def tone(self):
+        '''
+        Explicit function for buzzer in arduino
+        '''
+        self.send_command(10)
 
 
     #################################################
