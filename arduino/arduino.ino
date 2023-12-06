@@ -1,9 +1,13 @@
 #include <Servo.h>
 
+
 // Motor Driver
 #define enA 10 // PWM
 #define in1 9  // IN1
 #define in2 8  // IN2
+
+//buzzer
+#define buzzer 11
 
 // Servo
 #define servoPin1 12
@@ -35,6 +39,9 @@ void setup() {
   digitalWrite(in1, LOW);
   digitalWrite(in2, HIGH);
   analogWrite(enA, 0); 
+
+  //buzzer
+  pinMode(buzzer, OUTPUT);
 
   // Servo Setup
   servo1.attach(servoPin1);
@@ -113,6 +120,10 @@ void loop() {
     moveReturningServo(0);
     currentCommand = -1;
   }
+  else if(currentCommand ==10){
+    tone();
+    currentCommand =-1;
+  }
 }
 
 void receiveCommand(){
@@ -156,6 +167,16 @@ void moveReturningServo(int angle) {
   servo2.write(angle);
 }
 
+void tone (){
+  /*
+   * buzzer sounds
+   */
+   tone(buzzer,1000);
+   delay(1000);
+   noTone(buzzer);
+   delay(1000);
+}
+
 float readUltrasonicSensor(int trigPin, int echoPin) {
   /*
   * Get distance from specific ultrasonic sensor
@@ -171,4 +192,5 @@ float readUltrasonicSensor(int trigPin, int echoPin) {
   float distance = duration * 0.034 / 2;
 
   return distance;
+
 }
