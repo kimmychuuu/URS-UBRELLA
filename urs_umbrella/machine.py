@@ -297,8 +297,6 @@ class Machine:
             
             excluded_start_time = datetime.strptime(excluded_start, '%H:%M').time()
             excluded_end_time = datetime.strptime(excluded_end, '%H:%M').time()
-            if excluded_start_time > excluded_end_time:
-                raise Exception('Invalid excluded datetime ranges')
                 
         duration = end - start
         if excluded_start_time and excluded_end_time:
