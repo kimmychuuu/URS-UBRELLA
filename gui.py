@@ -241,7 +241,7 @@ class RentPage(tk.Canvas):
         self.delete(self.title_label)
         self.delete(self.subtitle_label)
         self.image_placeholder = self.create_image(145, 140, image=self.scan_image, anchor=tk.NW)
-        prompt = 'Place your student I.D.\nin front of the QR code\nScanner'
+        prompt = 'Place your umbrella QRCode\nin front of the QR code\nScanner'
         self.title_label = self.create_text(520, 240, text=prompt, font=('Montserrat', 28, 'bold'), fill='white', anchor=tk.NW)
         self.after(1000, self.scan)
 
