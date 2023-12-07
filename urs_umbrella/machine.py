@@ -1,12 +1,13 @@
 import serial
 import RPi.GPIO as GPIO
-import datetime
 import time
 import tkinter.simpledialog as simpledialog
 
 from .sim808 import Sim808
 from .database_api import DatabaseApi
+from .utils import machineutils
 from inputimeout import inputimeout
+from datetime import datetime, timedelta
 
 class Machine:
 
@@ -272,7 +273,12 @@ class Machine:
 
 
 
-    def compute_rent_fee(self, start: datetime, end: datetime, rate: float = 5):
+    def compute_rent_fee(self,
+                         start: datetime, 
+                         end: datetime, 
+                         rate: float = 5,
+                         excluded_start: str  = '',
+                         excluded_end: str = ''):
         '''
         Compute rent fee from start to end based on rate.
         End should be later than start
@@ -281,6 +287,8 @@ class Machine:
         start (datetime.datetime) : Start datetime
         end (datetime.datetime) : End datetime
         rate (float) : Rate per hour
+        excluded_start (str) : Excluded start time (24h-format)
+        excluded_end (str) : Excluded end time (24h-format)
 
         Return:
         rent (float) : Base rent
@@ -288,9 +296,31 @@ class Machine:
         if start > end:
             raise Exception('Invalid datetime ranges')
         
+        excluded_start_time = None
+        excluded_end_time = None
+        if excluded_start or excluded_end:
+            if not excluded_start or not excluded_end:
+                raise Exception('Excluded range is required')
+            
+            excluded_start_time = datetime.strptime(excluded_start, '%H:%M').time()
+            excluded_end_time = datetime.strptime(excluded_end, '%H:%M').time()
+                
         duration = end - start
-        rent = duration * rate
-        return rent
+        if excluded_start_time and excluded_end_time:
+            current_datetime = start
+            duration = timedelta()
+
+            while current_datetime < end:
+                current_end_time = min(current_datetime + timedelta(hours=1), end)
+                current_duration = current_end_time - current_datetime
+                current_time = current_datetime.strftime('%H:%M')
+                if not machineutils.time_falls_between(current_time, excluded_start, excluded_end):
+                    duration += current_duration
+                current_datetime += timedelta(hours=1)
+
+        hours_rented = duration.total_seconds() / 3600
+        rent = hours_rented * rate
+        return rent.__floor__()
     
 
 
@@ -369,7 +399,7 @@ class Machine:
 
 
     def return_umbrella(self, user_id: str, 
-                        returned_at: datetime.datetime, 
+                        returned_at: datetime, 
                         rent_fee: float, 
                         damage_fee: float,
                         damage_rating: str):
@@ -439,3 +469,4 @@ class Machine:
             except:
                 qrcode = ''
         return qrcode
+
