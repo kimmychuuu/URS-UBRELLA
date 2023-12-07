@@ -249,3 +249,24 @@ class DatabaseApi:
         result = response.json()
         self._validate_result(result)
 
+
+
+    def confirm_umbrella(self, user_id: str, umbrella_uuid: str):
+        '''
+        Check if umbrella matched to pending transaction
+
+        Parameter:
+        user_id (str) : User ID
+        umbrella_uuid (str) : Umbrella UUID
+        '''
+        response = requests.post(f'{self.base_url}/returnUmbrella', {
+            'apiKey': self.api_key,
+            'idNumber': user_id,
+            'umbrellaUUID': umbrella_uuid,
+        })
+        result = response.json()
+        try:
+            self._validate_result(result)
+            return True
+        except:
+            return False

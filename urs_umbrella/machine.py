@@ -67,7 +67,6 @@ class Machine:
     #################################################
 
 
-
     def get_arduino_response(self) -> str:
         '''
         Get arduino serial response
@@ -159,6 +158,8 @@ class Machine:
         '''
         self.send_command(9)
 
+
+
     def tone(self):
         '''
         Explicit function for buzzer in arduino
@@ -172,7 +173,6 @@ class Machine:
     #             COIN SLOT FUNCTIONS               #
     #                                               #
     #################################################
-
 
 
     def _increment_inserted_coin(self, channel):
@@ -191,22 +191,6 @@ class Machine:
         '''
         self.inserted_coins = 0
 
-
-    
-    def set_current_user(self, user_id):
-        '''
-        Set current user to user ID
-        '''
-        self.user = user_id
-
-
-
-    def logout(self):
-        '''
-        Set user to None
-        '''
-        self.user = None
-
     
 
     #################################################
@@ -214,7 +198,6 @@ class Machine:
     #              DATABASE FUNCTIONS               #
     #                                               #
     #################################################
-
 
 
     def validate_user(self, user_id: str) -> bool:
@@ -417,12 +400,22 @@ class Machine:
 
 
 
+    def confirm_umbrella(self, user_id: str, umbrella_uuid: str):
+        '''
+        Check if umbrella matched to pending transaction
+
+        Parameter:
+        user_id (str) : User ID
+        umbrella_uuid (str) : Umbrella UUID
+        '''
+
+
+
     #################################################
     #                                               #
     #               SIM808 FUNCTIONS                #
     #                                               #
     #################################################
-
 
 
     def send_sms(self, number: str, message: str):
@@ -439,10 +432,9 @@ class Machine:
 
     #################################################
     #                                               #
-    #           QRCODE SCANNER FUNCTIONS            #
+    #                OTHER FUNCTIONS                #
     #                                               #
     #################################################
-
 
 
     def scan_qrcode(self, gui: bool = False, wait_time: float = 0):
@@ -470,3 +462,18 @@ class Machine:
                 qrcode = ''
         return qrcode
 
+
+
+    def set_current_user(self, user_id):
+        '''
+        Set current user to user ID
+        '''
+        self.user = user_id
+
+
+
+    def logout(self):
+        '''
+        Set user to None
+        '''
+        self.user = None
