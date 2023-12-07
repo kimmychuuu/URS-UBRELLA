@@ -33,17 +33,23 @@ class Root(tk.Tk):
         register_page = RegisterPage(self, bg='#FEA633')
         register_page.pack()
 
-    def show_scan_page(self):
+    def show_scan_user_page(self):
         for child in self.winfo_children():
             child.destroy()
-        scan_page = ScanPage(self, bg='#FEA633')
-        scan_page.pack()
+        scan_user_page = ScanUserPage(self, bg='#FEA633')
+        scan_user_page.pack()
 
     def show_rent_page(self):
         for child in self.winfo_children():
             child.destroy()
         deposit_page = RentPage(self, bg='#FEA633')
         deposit_page.pack()
+
+    def show_scan_umbrella_page(self):
+        for child in self.winfo_children():
+            child.destroy()
+        scan_umbrella_page = ScanUmbrellaPage(self, bg='#1B1E2D')
+        scan_umbrella_page.pack()
 
     def show_return_page(self):
         for child in self.winfo_children():
@@ -124,11 +130,11 @@ class RegisterPage(tk.Canvas):
         self.tag_bind(self.proceed_button, "<Button-1>", self.proceed)
 
     def proceed(self, event):
-        self.root.show_scan_page()
+        self.root.show_scan_user_page()
 
 
 
-class ScanPage(tk.Canvas):
+class ScanUserPage(tk.Canvas):
     def __init__(self, root: Root, **kwargs):
         super().__init__(root, width=1024, height=600, **kwargs)
         self.root = root
@@ -167,7 +173,7 @@ class ScanPage(tk.Canvas):
         if rent_available:
             self.root.show_rent_page()
         else:
-            self.root.show_return_page()
+            self.root.show_scan_umbrella_page()
         
 
 
@@ -244,6 +250,44 @@ class RentPage(tk.Canvas):
         # logout user
         time.sleep(5)
         self.root.show_thankyou_page()
+
+
+
+class ScanUmbrellaPage(tk.Canvas):
+    def __init__(self, root: Root, **kwargs):
+        super().__init__(root, width=1024, height=600, **kwargs)
+        self.root = root
+
+        self.umbrella_logo_file = Image.open('assets/logo.png').resize((128, 128))
+        self.umbrella_logo_image = ImageTk.PhotoImage(self.umbrella_logo_file)
+        self.create_image(15, 15, image=self.umbrella_logo_image, anchor=tk.NW)
+
+        self.create_text(140, 40, text='Umbrella Renting Machine', font=('Montserrat', 34, 'bold'), fill='white', anchor=tk.NW)
+        self.create_text(150, 90, text='You matter the most under the umbrella', font=('Montserrat', 18, 'bold'), fill='black', anchor=tk.NW)
+
+        self.scan_file = Image.open('assets/scan.png').resize((350, 350))
+        self.scan_image = ImageTk.PhotoImage(self.scan_file)
+        self.create_image(145, 140, image=self.scan_image, anchor=tk.NW)
+
+        prompt = 'Place umbrella QR Code\nin front of the QR code\nScanner'
+        self.create_text(520, 240, text=prompt, font=('Montserrat', 28, 'bold'), fill='white', anchor=tk.NW)
+
+        # Temporary should handle the proceeding to next page via scan handler
+        self.proceed_file = Image.open('assets/proceed_button.png').resize((215, 60))
+        self.proceed_image = ImageTk.PhotoImage(self.proceed_file)
+        self.proceed_button = self.create_image(700, 425, image=self.proceed_image, anchor=tk.NW)
+        self.tag_bind(self.proceed_button, "<Button-1>", self.proceed)
+
+    def proceed(self, event):
+        # Check if qr is valid, if not valid show message then retry scan
+        # valid = False
+        # while not valid:
+        #     umbrella_uuid = self.machine.scan_qrcode()
+        #     valid = self.machine.confirm_umbrella(umbrella_uuid)
+        #     if valid:
+        #         self.show_return_page()
+        time.sleep(5)
+        self.root.show_return_page()
 
 
 
