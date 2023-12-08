@@ -1,3 +1,6 @@
+import sys
+sys.path.append('../')
+
 import urs_umbrella
 import os
 import unittest
