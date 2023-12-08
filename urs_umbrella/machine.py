@@ -26,7 +26,7 @@ class Machine:
         self.available_commands = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
         self.inserted_coins = 0
 
-        coin_pin = 10
+        coin_pin = 7
         self.accepting_coin = False
         self.sleep_after_command = 1
         GPIO.setmode(GPIO.BOARD)

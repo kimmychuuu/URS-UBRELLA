@@ -202,15 +202,15 @@ class RentPage(tk.Canvas):
         self.after(1000, self.deposit)
 
     def deposit(self):
-        # self.root.machine.accepting_coin = True
-        # deposit_amount = 5
-        # while self.root.machine.inserted_coins < deposit_amount:
-        #     pass
-        # else:
-        #     extra = self.root.machine.inserted_coins - deposit_amount
-        #     self.root.machine.add_balance(self.root.machine.user, extra)
-        #     self.root.machine.reset_inserted_coins()
-        # self.root.machine.accepting_coin = False
+        self.root.machine.accepting_coin = True
+        deposit_amount = 5
+        while self.root.machine.inserted_coins < deposit_amount:
+            pass
+        else:
+            extra = self.root.machine.inserted_coins - deposit_amount
+            self.root.machine.add_balance(self.root.machine.user, extra)
+            self.root.machine.reset_inserted_coins()
+        self.root.machine.accepting_coin = False
         time.sleep(5)
         self.dispense_umbrella()
 
@@ -426,15 +426,15 @@ class PaymentPage(tk.Canvas):
         self.after(1000, self.wait_for_payment)
 
     def wait_for_payment(self):
-        # self.root.machine.accepting_coin = True
-        # total_payment = self.details['total_fee']
-        # while self.root.machine.inserted_coins < total_payment:
-        #     pass
-        # else:
-        #     extra = self.root.machine.inserted_coins - total_payment
-        #     self.root.machine.add_balance(self.root.machine.user, extra)
-        #     self.root.machine.reset_inserted_coins()
-        # self.root.machine.accepting_coin = False
+        self.root.machine.accepting_coin = True
+        total_payment = self.details['total_fee']
+        while self.root.machine.inserted_coins < total_payment:
+            pass
+        else:
+            extra = self.root.machine.inserted_coins - total_payment
+            self.root.machine.add_balance(self.root.machine.user, extra)
+            self.root.machine.reset_inserted_coins()
+        self.root.machine.accepting_coin = False
         time.sleep(5)
         self.accept_umbrella()
 
@@ -495,8 +495,8 @@ class ThankYouPage(tk.Canvas):
 
 if __name__ == '__main__':
     machine = Machine(
-        arduino_port='/dev/ttyUSB1',
-        sim808_port='/de/ttyUSB0',
+        arduino_port='/dev/ttyUSB2',
+        sim808_port='/dev/ttyUSB0',
         api_key='URSUmbrella@2023',
         api_url='https://ursubrella.online/api'
     )
