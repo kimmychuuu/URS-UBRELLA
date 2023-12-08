@@ -408,7 +408,7 @@ class Machine:
         user_id (str) : User ID
         umbrella_uuid (str) : Umbrella UUID
         '''
-
+        return self.database.confirm_umbrella(user_id, umbrella_uuid)
 
 
     #################################################
