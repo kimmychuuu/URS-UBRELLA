@@ -215,6 +215,18 @@ class Machine:
         '''
         self.inserted_coins = 0
 
+
+
+    def accept_coin(self, enable: bool):
+        '''
+        Toggle machine coin acceptor.
+        If off, inserted coins are not counted
+
+        Parameters:
+        enable (bool) : Accept coins or not
+        '''
+        self.accepting_coin = enable
+
     
 
     #################################################
