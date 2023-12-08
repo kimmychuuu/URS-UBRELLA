@@ -2,6 +2,7 @@ import serial
 import RPi.GPIO as GPIO
 import time
 import tkinter.simpledialog as simpledialog
+import threading
 
 from .sim808 import Sim808
 from .database_api import DatabaseApi
@@ -12,7 +13,12 @@ from datetime import datetime, timedelta
 class Machine:
 
 
-    def __init__(self, arduino_port: str, sim808_port: str, api_url: str, api_key: str):
+    def __init__(self, 
+                 arduino_port: str, 
+                 sim808_port: str, 
+                 api_url: str, 
+                 api_key: str, 
+                 hardware_callbacks: str = 'gpio'):
         '''
         Initialize the main machine class
 
@@ -31,7 +37,13 @@ class Machine:
         self.sleep_after_command = 1
         GPIO.setmode(GPIO.BOARD)
         GPIO.setup(coin_pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-        GPIO.add_event_detect(coin_pin, GPIO.BOTH, callback=self._increment_inserted_coin, bouncetime=500)
+
+        if hardware_callbacks == 'gpio':
+            GPIO.add_event_detect(coin_pin, GPIO.BOTH, callback=self._increment_inserted_coin, bouncetime=500)
+        elif hardware_callbacks == 'thread':
+            threading.Thread(target=self._watch_coin_event, args=(coin_pin,)).start()
+        else:
+            raise Exception('Invalid hardware callback priority value')
 
         self.sim808 = Sim808(sim808_port)
         self.database = DatabaseApi(api_url, api_key)
@@ -178,12 +190,24 @@ class Machine:
     def _increment_inserted_coin(self, channel):
         '''
         Used as callback for event detection of coin sensor
+        (For GPIO)
         '''
         if self.accepting_coin:
             self.inserted_coins += 1
 
 
 
+    def _watch_coin_event(self, coin_pin):
+        '''
+        Used as callback for event detection of coin sensor
+        (For thread)
+        '''
+        while True:
+            if self.accepting_coin and GPIO.event_detect(coin_pin):
+                self.inserted_coins += 1
+
+
+    
     def reset_inserted_coins(self):
         '''
         Reset inserted_coins to 0.
