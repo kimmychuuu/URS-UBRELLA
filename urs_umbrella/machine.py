@@ -41,11 +41,12 @@ class Machine:
         if hardware_callbacks == 'gpio':
             GPIO.add_event_detect(coin_pin, GPIO.BOTH, callback=self._increment_inserted_coin, bouncetime=500)
         elif hardware_callbacks == 'thread':
+            GPIO.add_event_detect(coin_pin, GPIO.FALLING)
             threading.Thread(target=self._watch_coin_event, args=(coin_pin,)).start()
         else:
             raise Exception('Invalid hardware callback priority value')
 
-        self.sim808 = Sim808(sim808_port)
+        #self.sim808 = Sim808(sim808_port)
         self.database = DatabaseApi(api_url, api_key)
 
         self.user = None
