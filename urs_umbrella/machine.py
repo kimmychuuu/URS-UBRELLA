@@ -204,7 +204,7 @@ class Machine:
         (For thread)
         '''
         while True:
-            if self.accepting_coin and GPIO.event_detect(coin_pin):
+            if self.accepting_coin and GPIO.event_detected(coin_pin):
                 self.inserted_coins += 1
 
 
