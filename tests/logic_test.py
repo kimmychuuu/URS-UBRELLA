@@ -1,3 +1,6 @@
+import sys
+sys.path.append('../')
+
 from urs_umbrella import Machine
 from datetime import datetime
 
