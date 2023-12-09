@@ -171,7 +171,7 @@ void tone (){
   /*
    * buzzer sounds
    */
-   tone(buzzer,1000);
+   tone(buzzer,3000);
    delay(1000);
    noTone(buzzer);
    delay(1000);

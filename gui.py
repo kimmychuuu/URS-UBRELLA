@@ -205,7 +205,7 @@ class RentPage(tk.Canvas):
         self.root.machine.accepting_coin = True
         deposit_amount = 5
         while self.root.machine.inserted_coins < deposit_amount:
-            pass
+            print(self.root.machine.inserted_coins)
         else:
             extra = self.root.machine.inserted_coins - deposit_amount
             self.root.machine.add_balance(self.root.machine.user, extra)
@@ -233,6 +233,7 @@ class RentPage(tk.Canvas):
             pass
         self.root.machine.close_dispensing_servo()
         self.root.machine.stop_motor()
+        self.root.machine.tone()
 
         self.scan_umbrella()
 
@@ -254,6 +255,8 @@ class RentPage(tk.Canvas):
         )
         self.root.machine.logout()
         self.root.show_thankyou_page()
+
+        gui=True
 
 
 
@@ -464,6 +467,7 @@ class PaymentPage(tk.Canvas):
             pass
         self.root.machine.close_returning_servo()
         self.root.machine.stop_motor()
+        self.root.machine.tone()
         self.root.show_thankyou_page()
 
 
@@ -498,6 +502,7 @@ if __name__ == '__main__':
         arduino_port='/dev/ttyUSB1',
         sim808_port='/dev/ttyUSB0',
         api_key='URSUmbrella@2023',
-        api_url='https://ursubrella.online/api'
+        api_url='https://ursubrella.online/api',
+        hardware_callbacks='thread'
     )
     root = Root(machine)

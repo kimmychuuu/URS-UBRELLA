@@ -29,7 +29,7 @@ class Machine:
         api_key (str) : API key
         '''
         self.arduino = serial.Serial(arduino_port, 9600, timeout=1)
-        self.available_commands = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+        self.available_commands = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9,10]
         self.inserted_coins = 0
 
         coin_pin = 7
@@ -204,7 +204,7 @@ class Machine:
         (For thread)
         '''
         while True:
-            time.sleep(0.065)
+            time.sleep(0.060)
             if self.accepting_coin and GPIO.event_detected(coin_pin):
                 self.inserted_coins += 1
         
