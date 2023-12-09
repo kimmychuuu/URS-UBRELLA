@@ -495,7 +495,7 @@ class ThankYouPage(tk.Canvas):
 
 if __name__ == '__main__':
     machine = Machine(
-        arduino_port='/dev/ttyUSB2',
+        arduino_port='/dev/ttyUSB1',
         sim808_port='/dev/ttyUSB0',
         api_key='URSUmbrella@2023',
         api_url='https://ursubrella.online/api'

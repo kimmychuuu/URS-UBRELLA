@@ -41,7 +41,7 @@ class Machine:
         if hardware_callbacks == 'gpio':
             GPIO.add_event_detect(coin_pin, GPIO.BOTH, callback=self._increment_inserted_coin, bouncetime=500)
         elif hardware_callbacks == 'thread':
-            GPIO.add_event_detect(coin_pin, GPIO.FALLING)
+            GPIO.add_event_detect(coin_pin, GPIO.RISING)
             threading.Thread(target=self._watch_coin_event, args=(coin_pin,)).start()
         else:
             raise Exception('Invalid hardware callback priority value')
@@ -204,8 +204,10 @@ class Machine:
         (For thread)
         '''
         while True:
+            time.sleep(0.065)
             if self.accepting_coin and GPIO.event_detected(coin_pin):
                 self.inserted_coins += 1
+        
 
 
     
