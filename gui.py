@@ -247,7 +247,7 @@ class RentPage(tk.Canvas):
         self.after(1000, self.scan)
 
     def scan(self):
-        umbrella_uuid = self.root.machine.scan_qrcode()
+        umbrella_uuid = self.root.machine.scan_qrcode(gui=True)
         try:
             self.root.machine.rent_umbrella(
                 user_id=self.root.machine.user,
@@ -259,7 +259,7 @@ class RentPage(tk.Canvas):
         self.root.machine.logout()
         self.root.show_thankyou_page()
 
-        gui=True
+        
 
 
 
