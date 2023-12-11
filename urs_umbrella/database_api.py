@@ -222,6 +222,7 @@ class DatabaseApi:
             'umbrellaUUID': umbrella_uuid,
         })
         result = response.json()
+        print(result)
         self._validate_result(result)
 
 

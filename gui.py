@@ -248,11 +248,14 @@ class RentPage(tk.Canvas):
 
     def scan(self):
         umbrella_uuid = self.root.machine.scan_qrcode()
-        self.root.machine.rent_umbrella(
-            user_id=self.root.machine.user,
-            umbrella_uuid=umbrella_uuid,
-            rented_at=datetime.now(),
-        )
+        try:
+            self.root.machine.rent_umbrella(
+                user_id=self.root.machine.user,
+                umbrella_uuid=umbrella_uuid,
+                rented_at=datetime.now(),
+            )
+        except Exception as e:
+            messagebox.showerror('Exception', e)
         self.root.machine.logout()
         self.root.show_thankyou_page()
 
@@ -356,6 +359,7 @@ class ReturnPage(tk.Canvas):
         damage_fee = damage_score * 5
         rent_date = datetime.strptime(latest_transaction['rented_at'], "%Y-%m-%d %H:%M:%S")
         return_date = datetime.now()
+        # Add excluded times
         rent_fee = self.root.machine.compute_rent_fee(rent_date, return_date)
         transaction_details = {
             'rented_at': rent_date,
@@ -438,7 +442,16 @@ class PaymentPage(tk.Canvas):
             self.root.machine.add_balance(self.root.machine.user, extra)
             self.root.machine.reset_inserted_coins()
         self.root.machine.accepting_coin = False
-        time.sleep(5)
+        try:
+            self.root.machine.return_umbrella(
+                damage_fee=self.details.get('damage_fee'),
+                damage_rating=self.details.get('damage_rating'),
+                rent_fee=self.details.get('rent_fee'),
+                returned_at=self.details.get('returned_at'),
+                user_id=self.root.machine.user,
+            )
+        except Exception as e:
+            messagebox.showerror('Exception', e)
         self.accept_umbrella()
 
     def accept_umbrella(self):
