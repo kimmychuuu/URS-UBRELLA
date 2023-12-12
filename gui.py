@@ -226,10 +226,10 @@ class RentPage(tk.Canvas):
 
     def dispense(self):
         self.root.machine.start_motor()
-        while self.root.machine.get_distance_from_ultrasonic(3) > 30:
+        while self.root.machine.get_distance_from_ultrasonic(3) > 10:
             pass
         self.root.machine.open_dispensing_servo()
-        while self.root.machine.get_distance_from_ultrasonic(4) > 30:
+        while self.root.machine.get_distance_from_ultrasonic(4) > 10:
             pass
         self.root.machine.close_dispensing_servo()
         self.root.machine.stop_motor()
@@ -472,11 +472,11 @@ class PaymentPage(tk.Canvas):
         self.after(1000, self.wait_for_umbrella)
 
     def wait_for_umbrella(self):
-        while self.root.machine.get_distance_from_ultrasonic(1) > 30:
+        while self.root.machine.get_distance_from_ultrasonic(1) > 8:
             pass
         self.root.machine.open_returning_servo()
         self.root.machine.start_motor()
-        while self.root.machine.get_distance_from_ultrasonic(2) > 30:
+        while self.root.machine.get_distance_from_ultrasonic(2) > 12:
             pass
         self.root.machine.close_returning_servo()
         self.root.machine.stop_motor()
