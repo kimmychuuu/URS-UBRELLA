@@ -320,7 +320,7 @@ class ScanUmbrellaPage(tk.Canvas):
         self.scan_image = ImageTk.PhotoImage(self.scan_file)
         self.create_image(145, 140, image=self.scan_image, anchor=tk.NW)
 
-        prompt = 'Place umbrella QR Code\nin front of the QR code\nScanner'
+        prompt = 'Place umbrella QR Code\nin front of the\nQR code Scanner'
         self.create_text(520, 240, text=prompt, font=('Montserrat', 28, 'bold'), fill='white', anchor=tk.NW)
 
         self.after(1000, self.proceed)
