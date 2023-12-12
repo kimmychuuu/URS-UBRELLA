@@ -355,8 +355,10 @@ class ReturnPage(tk.Canvas):
         ]
         damage_score = statistics.mean(damages)
         damage_rating = self.get_damage_interpretation(damage_score)
-        # Not sure how to compute damage fee
-        damage_fee = damage_score * 5
+        damage_fee = 0
+        for damage in damages:
+            damage_fee += self.get_damage_fee(damage)
+            
         rent_date = datetime.strptime(latest_transaction['rented_at'], "%Y-%m-%d %H:%M:%S")
         return_date = datetime.now()
         # Add excluded times
@@ -382,6 +384,16 @@ class ReturnPage(tk.Canvas):
             return 'Moderate'
         else:
             return 'Severe'
+        
+    @staticmethod 
+    def get_damage_fee(score: int):
+        if score == 1:
+            return 15
+        if score == 2:
+            return 40
+        if score == 3:
+            return 70
+        return 0
         
     @staticmethod
     def get_duration(rent_date, return_date) -> str:
