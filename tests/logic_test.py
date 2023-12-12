@@ -4,7 +4,7 @@ sys.path.append('../')
 from urs_umbrella import Machine
 from datetime import datetime
 
-machine = Machine(arduino_port='', sim808_port='', api_url='', api_key='')
+machine = Machine(arduino_port='/dev/ttyUSB1', sim808_port='', api_url='https://ursubrella.online/api', api_key='URSUmbrella@2023')
 
 id_number = machine.scan_qrcode()
 
