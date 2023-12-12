@@ -111,6 +111,7 @@ class DatabaseApi:
             'idNumber': user_id,
         })
         result = response.json()
+        print(result)
         self._validate_result(result)
         return result['transaction']
     

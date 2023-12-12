@@ -206,8 +206,6 @@ class Machine:
         while True:
             if self.accepting_coin and GPIO.event_detected(coin_pin):
                 self.inserted_coins += 1
-        
-
 
     
     def reset_inserted_coins(self):
