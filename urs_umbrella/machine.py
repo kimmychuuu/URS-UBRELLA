@@ -296,6 +296,7 @@ class Machine:
                          start: datetime, 
                          end: datetime, 
                          rate: float = 5,
+                         deposit_amount: float = 5,
                          excluded_start: str  = '',
                          excluded_end: str = ''):
         '''
@@ -337,8 +338,13 @@ class Machine:
                     duration += current_duration
                 current_datetime += timedelta(hours=1)
 
-        hours_rented = duration.total_seconds() / 3600
+        hours_rented, remaining_minutes = divmod(duration.total_seconds(), 3600) 
+        remaining_minutes //= 60
         rent = hours_rented * rate
+        if remaining_minutes >= 15:
+            rent += rate
+        # Has deposit
+        rent -= deposit_amount
         return rent.__floor__()
     
 

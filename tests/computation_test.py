@@ -23,6 +23,7 @@ def time_falls_between(time, start, end, hour_interval=1):
 def compute_rent_fee(start: datetime, 
                     end: datetime, 
                     rate: float = 5,
+                    deposit_amount: float = 5,
                     excluded_start: str  = '',
                     excluded_end: str = ''):
     '''
@@ -64,8 +65,13 @@ def compute_rent_fee(start: datetime,
                 duration += current_duration
             current_datetime += timedelta(hours=1)
 
-    hours_rented = duration.total_seconds() / 3600
+    hours_rented, remaining_minutes = divmod(duration.total_seconds(), 3600) 
+    remaining_minutes //= 60
     rent = hours_rented * rate
+    if remaining_minutes >= 15:
+        rent += rate
+    # Has deposit
+    rent -= deposit_amount
     return rent.__floor__()
 
 
@@ -115,7 +121,7 @@ class Computation(unittest.TestCase):
         end_time = datetime(2023, 8, 3, 18, 30)
         rent = compute_rent_fee(start=start_time,
                                 end=end_time)
-        self.assertEqual(rent, 30)
+        self.assertEqual(rent, 25)
 
 
 
@@ -124,7 +130,7 @@ class Computation(unittest.TestCase):
         end_time = datetime(2023, 8, 3, 18, 45)
         rent = compute_rent_fee(start=start_time,
                                 end=end_time)
-        self.assertEqual(rent, 31)
+        self.assertEqual(rent, 30)
 
 
         
@@ -134,7 +140,7 @@ class Computation(unittest.TestCase):
         rent = compute_rent_fee(start=start_time,
                                 end=end_time,
                                 rate=10)
-        self.assertEqual(rent, 60)
+        self.assertEqual(rent, 55)
 
 
 
@@ -143,8 +149,9 @@ class Computation(unittest.TestCase):
         end_time = datetime(2023, 8, 3, 18, 45)
         rent = compute_rent_fee(start=start_time,
                                 end=end_time,
-                                rate=10)
-        self.assertEqual(rent, 62)
+                                rate=10,
+                                deposit_amout=10)
+        self.assertEqual(rent, 60)
 
 
 
@@ -157,7 +164,7 @@ class Computation(unittest.TestCase):
                                 end=end_time,
                                 excluded_start=excluded_start_time,
                                 excluded_end=excluded_end_time)
-        self.assertEqual(rent, 100)
+        self.assertEqual(rent, 95)
 
 
 
@@ -171,7 +178,7 @@ class Computation(unittest.TestCase):
                                 rate=10,
                                 excluded_start=excluded_start_time,
                                 excluded_end=excluded_end_time)
-        self.assertEqual(rent, 340)
+        self.assertEqual(rent, 335)
 
 
 if __name__ == '__main__':
