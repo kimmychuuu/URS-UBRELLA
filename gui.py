@@ -268,7 +268,6 @@ class RentPage(tk.Canvas):
         
 
 
-
 class ScanUmbrellaPage(tk.Canvas):
     def __init__(self, root: Root, **kwargs):
         super().__init__(root, width=1024, height=600, **kwargs)
@@ -296,41 +295,6 @@ class ScanUmbrellaPage(tk.Canvas):
         while not valid:
             umbrella_uuid = self.root.machine.scan_qrcode(gui=True)
             valid = self.root.machine.confirm_umbrella(umbrella_uuid)
-            if valid:
-                self.root.show_return_page()
-            else:
-                if not messagebox.askretrycancel('Invalid QR Code', 'User ID not found. Retry scanning?', parent=self):
-                    self.root.show_home_page()
-
-
-
-class ScanUmbrellaPage(tk.Canvas):
-    def __init__(self, root: Root, **kwargs):
-        super().__init__(root, width=1024, height=600, **kwargs)
-        self.root = root
-
-        self.umbrella_logo_file = Image.open('assets/logo.png').resize((128, 128))
-        self.umbrella_logo_image = ImageTk.PhotoImage(self.umbrella_logo_file)
-        self.create_image(15, 15, image=self.umbrella_logo_image, anchor=tk.NW)
-
-        self.create_text(140, 40, text='Umbrella Renting Machine', font=('Montserrat', 34, 'bold'), fill='white', anchor=tk.NW)
-        self.create_text(150, 90, text='You matter the most under the umbrella', font=('Montserrat', 18, 'bold'), fill='black', anchor=tk.NW)
-
-        self.scan_file = Image.open('assets/scan.png').resize((350, 350))
-        self.scan_image = ImageTk.PhotoImage(self.scan_file)
-        self.create_image(145, 140, image=self.scan_image, anchor=tk.NW)
-
-        prompt = 'Place umbrella QR Code\nin front of the\nQR code Scanner'
-        self.create_text(520, 240, text=prompt, font=('Montserrat', 28, 'bold'), fill='white', anchor=tk.NW)
-
-        self.after(1000, self.proceed)
-
-    def proceed(self):
-        # Check if qr is valid, if not valid show message then retry scan
-        valid = False
-        while not valid:
-            umbrella_uuid = self.root.machine.scan_qrcode(gui=True)
-            valid = self.root.machine.confirm_umbrella(self.root.machine.user, umbrella_uuid)
             if valid:
                 self.root.show_return_page()
             else:
