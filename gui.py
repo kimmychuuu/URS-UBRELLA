@@ -330,7 +330,7 @@ class ScanUmbrellaPage(tk.Canvas):
         valid = False
         while not valid:
             umbrella_uuid = self.root.machine.scan_qrcode(gui=True)
-            valid = self.root.machine.confirm_umbrella(umbrella_uuid)
+            valid = self.root.machine.confirm_umbrella(self.root.machine.user, umbrella_uuid)
             if valid:
                 self.root.show_return_page()
             else:
