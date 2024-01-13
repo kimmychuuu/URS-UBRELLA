@@ -53,6 +53,14 @@ class Root(tk.Tk):
         scan_umbrella_page = ScanUmbrellaPage(self, bg='#FEA633')
         scan_umbrella_page.pack()
 
+    def show_pre_damage_assessment_page(self, umbrella_uuid: str):
+        for child in self.winfo_children():
+            child.destroy()
+        pre_damage_assessment_page = PreDamageAssessmentPage(self, 
+                                                             umbrella_uuid=umbrella_uuid, 
+                                                             bg='#1B1E2D')
+        pre_damage_assessment_page.pack()
+        
     def show_return_page(self):
         for child in self.winfo_children():
             child.destroy()
@@ -263,9 +271,141 @@ class RentPage(tk.Canvas):
         except Exception as e:
             messagebox.showerror('Exception', e)
         self.root.machine.logout()
+        previous_transaction = self.root.machine.get_latest_transaction(umbrella_uuid=umbrella_uuid)
+        transaction = previous_transaction.get("transaction")
+        if transaction:
+            damage_rating = transaction.get("damage_rating")
+            if damage_rating == 'None':
+                if messagebox.askyesno('No previous damage assessment',
+                                       'No previous damage assessment found, would you like to assess umbrella damage?'):
+                    self.root.show_pre_damage_assessment_page(umbrella_uuid)
         self.root.show_thankyou_page()
 
         
+
+
+class PreDamageAssessmentPage(tk.Canvas):
+    def __init__(self, root: Root, umbrella_uuid: str, **kwargs):
+        super().__init__(root, width=1024, height=600, **kwargs)
+        self.root = root
+        self.umbrella_uuid = umbrella_uuid
+
+        self.umbrella_logo_file = Image.open('assets/logo.png').resize((128, 128))
+        self.umbrella_logo_image = ImageTk.PhotoImage(self.umbrella_logo_file)
+        self.create_image(15, 15, image=self.umbrella_logo_image, anchor=tk.NW)
+
+        self.create_text(140, 40, text='Umbrella Renting Machine', font=('Montserrat', 34, 'bold'), fill='white', anchor=tk.NW)
+        self.create_text(150, 90, text='You matter the most under the umbrella', font=('Montserrat', 18, 'bold'), fill='white', anchor=tk.NW)
+
+        self.deposit_file = Image.open('assets/assess.png').resize((350, 350))
+        self.deposit_image = ImageTk.PhotoImage(self.deposit_file)
+        self.create_image(30, 140, image=self.deposit_image, anchor=tk.NW)
+
+        self.container_file = Image.open('assets/container.png').resize((620, 350))
+        self.container_image = ImageTk.PhotoImage(self.container_file)
+        self.create_image(400, 140, image=self.container_image, anchor=tk.NW)
+
+        self.create_text(640, 175, text='None', font=('Montserrat', 14, 'bold'), fill='black')
+        self.create_text(730, 175, text='Minor', font=('Montserrat', 14, 'bold'), fill='black')
+        self.create_text(830, 175, text='Moderate', font=('Montserrat', 14, 'bold'), fill='black')
+        self.create_text(930, 175, text='Sever', font=('Montserrat', 14, 'bold'), fill='black')
+
+        self.create_text(450, 210, text='Handle Damage', font=('Montserrat', 14), fill='black', anchor=tk.NW)
+        self.create_text(450, 250, text='Canopy Damage', font=('Montserrat', 14), fill='black', anchor=tk.NW)
+        self.create_text(450, 290, text='Runner Damage', font=('Montserrat', 14), fill='black', anchor=tk.NW)
+        self.create_text(450, 330, text='Rib Damage', font=('Montserrat', 14), fill='black', anchor=tk.NW)
+        self.create_text(450, 370, text='Button Damage', font=('Montserrat', 14), fill='black', anchor=tk.NW)
+        self.create_text(450, 410, text='Shaft Damage', font=('Montserrat', 14), fill='black', anchor=tk.NW)
+        
+        self.handle_damage = tk.IntVar()
+        self.canopy_damage = tk.IntVar()
+        self.runner_damage = tk.IntVar()
+        self.rib_damage = tk.IntVar()
+        self.button_damage = tk.IntVar()
+        self.shaft_damage = tk.IntVar()
+        self.handle_damage.set(0)
+        self.canopy_damage.set(0)
+        self.runner_damage.set(0)
+        self.rib_damage.set(0)
+        self.button_damage.set(0)
+        self.shaft_damage.set(0)
+
+        tk.Radiobutton(self, variable=self.handle_damage, value=0, bg='white').place(x=630, y=210)
+        tk.Radiobutton(self, variable=self.handle_damage, value=1, bg='white').place(x=720, y=210)
+        tk.Radiobutton(self, variable=self.handle_damage, value=2, bg='white').place(x=820, y=210)
+        tk.Radiobutton(self, variable=self.handle_damage, value=3, bg='white').place(x=920, y=210)
+
+        tk.Radiobutton(self, variable=self.canopy_damage, value=0, bg='white').place(x=630, y=250)
+        tk.Radiobutton(self, variable=self.canopy_damage, value=1, bg='white').place(x=720, y=250)
+        tk.Radiobutton(self, variable=self.canopy_damage, value=2, bg='white').place(x=820, y=250)
+        tk.Radiobutton(self, variable=self.canopy_damage, value=3, bg='white').place(x=920, y=250)
+
+        tk.Radiobutton(self, variable=self.runner_damage, value=0, bg='white').place(x=630, y=290)
+        tk.Radiobutton(self, variable=self.runner_damage, value=1, bg='white').place(x=720, y=290)
+        tk.Radiobutton(self, variable=self.runner_damage, value=2, bg='white').place(x=820, y=290)
+        tk.Radiobutton(self, variable=self.runner_damage, value=3, bg='white').place(x=920, y=290)
+
+        tk.Radiobutton(self, variable=self.rib_damage, value=0, bg='white').place(x=630, y=330)
+        tk.Radiobutton(self, variable=self.rib_damage, value=1, bg='white').place(x=720, y=330)
+        tk.Radiobutton(self, variable=self.rib_damage, value=2, bg='white').place(x=820, y=330)
+        tk.Radiobutton(self, variable=self.rib_damage, value=3, bg='white').place(x=920, y=330)
+
+        tk.Radiobutton(self, variable=self.button_damage, value=0, bg='white').place(x=630, y=370)
+        tk.Radiobutton(self, variable=self.button_damage, value=1, bg='white').place(x=720, y=370)
+        tk.Radiobutton(self, variable=self.button_damage, value=2, bg='white').place(x=820, y=370)
+        tk.Radiobutton(self, variable=self.button_damage, value=3, bg='white').place(x=920, y=370)
+
+        tk.Radiobutton(self, variable=self.shaft_damage, value=0, bg='white').place(x=630, y=410)
+        tk.Radiobutton(self, variable=self.shaft_damage, value=1, bg='white').place(x=720, y=410)
+        tk.Radiobutton(self, variable=self.shaft_damage, value=2, bg='white').place(x=820, y=410)
+        tk.Radiobutton(self, variable=self.shaft_damage, value=3, bg='white').place(x=920, y=410)
+
+        self.proceed_file = Image.open('assets/proceed_button.png').resize((215, 60))
+        self.proceed_image = ImageTk.PhotoImage(self.proceed_file)
+        self.proceed_button = self.create_image(750, 450, image=self.proceed_image, anchor=tk.NW)
+        self.tag_bind(self.proceed_button, "<Button-1>", self.assess_damage)
+
+    def assess_damage(self, event):
+        damages = [
+            self.handle_damage.get(),
+            self.canopy_damage.get(),
+            self.runner_damage.get(),
+            self.rib_damage.get(),
+            self.button_damage.get(),
+            self.shaft_damage.get(),
+        ]
+        damage_score = statistics.mean(damages)
+        damage_rating = self.get_damage_interpretation(damage_score)
+        damage_fee = 0
+        for damage in damages:
+            damage_fee += self.get_damage_fee(damage)
+            
+        previous_transaction = self.root.machine.get_latest_transaction(umbrella_uuid=self.umbrella_uuid)
+        self.root.machine.deduct_balance(previous_transaction['user']['id'], damage_fee)
+        self.root.show_thankyou_page()
+
+    @staticmethod
+    def get_damage_interpretation(value):
+        if value <= 0:
+            return 'None'
+        elif value == 1:
+            return 'Minor'
+        elif value == 2:
+            return 'Moderate'
+        else:
+            return 'Severe'
+        
+    @staticmethod 
+    def get_damage_fee(score: int):
+        if score == 1:
+            return 15
+        if score == 2:
+            return 40
+        if score == 3:
+            return 70
+        return 0
+    
+
 
 
 class ScanUmbrellaPage(tk.Canvas):
