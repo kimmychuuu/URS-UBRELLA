@@ -278,7 +278,7 @@ class Machine:
     
 
 
-    def get_latest_transaction(self, user_id: str) -> dict:
+    def get_latest_transaction(self, user_id: str = None, umbrella_uuid: str = None) -> dict:
         '''
         Get users latest transaction
 
@@ -288,7 +288,7 @@ class Machine:
         Returns:
         transaction (dict) : Transaction Details
         '''
-        return self.database.get_latest_transaction(user_id)
+        return self.database.get_latest_transaction(user_id=user_id, umbrella_uuid=umbrella_uuid)
 
 
 

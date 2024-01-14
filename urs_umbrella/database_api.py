@@ -96,7 +96,7 @@ class DatabaseApi:
     
 
 
-    def get_latest_transaction(self, user_id: str) -> dict:
+    def get_latest_transaction(self, user_id: str = None, umbrella_uuid: str = None) -> dict:
         '''
         Get users latest transaction
 
@@ -106,9 +106,14 @@ class DatabaseApi:
         Returns:
         transaction (dict) : Transaction Details
         '''
+        initial_params = {
+            'idNumber': user_id,
+            'umbrellaUUID': umbrella_uuid
+        }
+        params = {key: value for key, value in initial_params.items() if value is not None}
         response = requests.post(f'{self.base_url}/getLatestTransaction', {
             'apiKey': self.api_key,
-            'idNumber': user_id,
+            **params
         })
         result = response.json()
         print(result)
