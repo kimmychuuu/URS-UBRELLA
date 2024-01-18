@@ -228,7 +228,6 @@ class DatabaseApi:
             'umbrellaUUID': umbrella_uuid,
         })
         result = response.json()
-        print(result)
         self._validate_result(result)
 
 
@@ -266,7 +265,7 @@ class DatabaseApi:
         user_id (str) : User ID
         umbrella_uuid (str) : Umbrella UUID
         '''
-        response = requests.post(f'{self.base_url}/returnUmbrella', {
+        response = requests.post(f'{self.base_url}/confirmUmbrella', {
             'apiKey': self.api_key,
             'idNumber': user_id,
             'umbrellaUUID': umbrella_uuid,
@@ -274,6 +273,6 @@ class DatabaseApi:
         result = response.json()
         try:
             self._validate_result(result)
-            return True
+            return result.get('confirmation')
         except:
             return False
