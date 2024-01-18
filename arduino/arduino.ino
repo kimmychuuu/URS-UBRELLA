@@ -141,8 +141,8 @@ void startMotor() {
   /*
   * Start DC Motor at full speed
   */
-  digitalWrite(in1, LOW);
-  digitalWrite(in2, HIGH);
+  digitalWrite(in1, HIGH);
+  digitalWrite(in2, LOW);
   analogWrite(enA, 255); 
 }
 
