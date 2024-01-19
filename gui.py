@@ -524,7 +524,7 @@ class ReturnPage(tk.Canvas):
         self.tag_bind(self.proceed_button, "<Button-1>", self.assess_damage)
 
     def assess_damage(self, event):
-        latest_transaction = self.root.machine.get_latest_transaction(user=self.root.machine.user)
+        latest_transaction = self.root.machine.get_latest_transaction(user_id=self.root.machine.user)
         damages = [
             self.handle_damage.get(),
             self.canopy_damage.get(),
