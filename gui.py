@@ -271,8 +271,7 @@ class RentPage(tk.Canvas):
         except Exception as e:
             messagebox.showerror('Exception', e)
         self.root.machine.logout()
-        previous_transaction = self.root.machine.get_latest_transaction(umbrella_uuid=umbrella_uuid)
-        transaction = previous_transaction.get("transaction")
+        transaction = self.root.machine.get_latest_transaction(umbrella_uuid=umbrella_uuid)
         if transaction:
             damage_rating = transaction.get("damage_rating")
             if damage_rating == 'None':
