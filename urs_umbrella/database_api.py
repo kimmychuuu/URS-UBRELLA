@@ -116,9 +116,11 @@ class DatabaseApi:
             **params
         })
         result = response.json()
-        print(result)
-        self._validate_result(result)
-        return result['transaction']
+        try:
+            self._validate_result(result)
+            return result['transaction']
+        except:
+            return None
     
 
 
