@@ -125,7 +125,7 @@ class DatabaseApi:
         print(result)
         try:
             self._validate_result(result)
-            return result['transaction']
+            return result
         except:
             return None
     

@@ -266,7 +266,8 @@ class RentPage(tk.Canvas):
 
     def scan(self):
         umbrella_uuid = self.root.machine.scan_qrcode(gui=True)
-        transaction = self.root.machine.get_latest_transaction(umbrella_uuid=umbrella_uuid)
+        result = self.root.machine.get_latest_transaction(umbrella_uuid=umbrella_uuid)
+        transaction = result.get('transaction')
         if transaction:
             damage_rating = transaction.get("damage_rating")
             if damage_rating == 'None':
@@ -538,7 +539,8 @@ class ReturnPage(tk.Canvas):
         self.tag_bind(self.proceed_button, "<Button-1>", self.assess_damage)
 
     def assess_damage(self, event):
-        latest_transaction = self.root.machine.get_latest_transaction(user_id=self.root.machine.user)
+        result = self.root.machine.get_latest_transaction(user_id=self.root.machine.user)
+        latest_transaction = result.get('latest_transaction')
         damages = [
             self.handle_damage.get(),
             self.canopy_damage.get(),
