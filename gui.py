@@ -265,7 +265,18 @@ class RentPage(tk.Canvas):
         self.after(1000, self.scan)
 
     def scan(self):
-        umbrella_uuid = self.root.machine.scan_qrcode(gui=True)
+        while True:
+            umbrella_uuid = self.root.machine.scan_qrcode(gui=True)
+            try:
+                available = self.root.machine.check_availability(umbrella_uuid=umbrella_uuid)
+                if not available:
+                    messagebox.showerror('Transaction Error', 'Umbrella is already in renting stage. ' \
+                                            'Please scan the umbrella dispensed by the machine. Do not cheat')
+                    continue
+                break
+            except Exception as e:
+                messagebox.showerror('Error', 'Error validating umbrella please try again!')
+                
         result = self.root.machine.get_latest_transaction(umbrella_uuid=umbrella_uuid)
         transaction = result.get('transaction')
         if transaction:
