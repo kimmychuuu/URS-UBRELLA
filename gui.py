@@ -665,11 +665,11 @@ class PaymentPage(tk.Canvas):
         self.after(1000, self.wait_for_umbrella)
 
     def wait_for_umbrella(self):
-        while self.root.machine.get_distance_from_ultrasonic(1) > 8:
+        while self.root.machine.get_distance_from_ultrasonic(1) > 7:
             pass
         self.root.machine.open_returning_servo()
         self.root.machine.start_motor()
-        while self.root.machine.get_distance_from_ultrasonic(2) > 12:
+        while self.root.machine.get_distance_from_ultrasonic(2) > 4:
             pass
         self.root.machine.close_returning_servo()
         self.root.machine.stop_motor()
@@ -705,7 +705,7 @@ class ThankYouPage(tk.Canvas):
 
 if __name__ == '__main__':
     machine = Machine(
-        arduino_port='/dev/ttyUSB1',
+        arduino_port='/dev/ttyUSB0',
         sim808_port='/dev/ttyUSB0',
         api_key='URSUmbrella@2023',
         api_url='https://ursubrella.online/api',

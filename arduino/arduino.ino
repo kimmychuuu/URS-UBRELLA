@@ -7,7 +7,7 @@
 #define in2 8  // IN2
 
 //buzzer
-#define buzzer 11
+#define buzzer 7
 
 // Servo
 #define servoPin1 12
@@ -20,11 +20,11 @@
 #define trigPin2 4
 #define echoPin2 5
 
-#define trigPin3 6
-#define echoPin3 7
+#define trigPin3 A0
+#define echoPin3 A1
 
-#define trigPin4 A0
-#define echoPin4 A1
+#define trigPin4 A2
+#define echoPin4 A3
 
 Servo servo1;
 Servo servo2;
@@ -143,7 +143,7 @@ void startMotor() {
   */
   digitalWrite(in1, LOW);
   digitalWrite(in2, HIGH);
-  analogWrite(enA, 255); 
+  analogWrite(enA, 150); 
 }
 
 void stopMotor() {
