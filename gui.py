@@ -386,7 +386,7 @@ class PreDamageAssessmentPage(tk.Canvas):
             damage_fee += self.get_damage_fee(damage)
             
         previous_transaction = self.root.machine.get_latest_transaction(umbrella_uuid=self.umbrella_uuid)
-        self.root.machine.deduct_balance(previous_transaction['user']['id'], damage_fee)
+        self.root.machine.deduct_balance(previous_transaction['user']['id_number'], damage_fee)
 
         try:
             self.root.machine.rent_umbrella(
