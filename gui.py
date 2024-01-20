@@ -540,7 +540,7 @@ class ReturnPage(tk.Canvas):
 
     def assess_damage(self, event):
         result = self.root.machine.get_latest_transaction(user_id=self.root.machine.user)
-        latest_transaction = result.get('latest_transaction')
+        latest_transaction = result.get('transaction')
         damages = [
             self.handle_damage.get(),
             self.canopy_damage.get(),
