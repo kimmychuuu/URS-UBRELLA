@@ -643,6 +643,7 @@ class PaymentPage(tk.Canvas):
     def wait_for_payment(self):
         self.root.machine.accepting_coin = True
         total_payment = self.details['total_fee']
+        self.root.machine.reset_inserted_coins()
         while self.root.machine.inserted_coins < total_payment:
             remaining = total_payment - self.root.machine.inserted_coins
             self.counter_label.configure(text=f'{remaining}')
