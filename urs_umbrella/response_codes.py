@@ -16,6 +16,7 @@ class ResponseCodes:
             'URS-0302': 'PENDING_TRANSACTION_FOUND',
             'URS-0303': 'PENDING_TRANSACTION_NOT_FOUND',
             'URS-0304': 'UMBRELLA_NOT_FOUND',
+            'URS-0305': 'TRANSACTION_NOT_FOUND',
             
             'URS-0404': 'UNKNOWN ERROR'
         }

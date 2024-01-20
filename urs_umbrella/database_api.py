@@ -32,6 +32,21 @@ class DatabaseApi:
 
 
 
+    def _add_message(self, result: dict):
+        '''
+        Add error message if any
+        '''
+        message = 'Success'
+        if 'success' not in result.keys():
+            message = ResponseCodes.UNKNOWN_ERROR
+        if not result['success']:
+            error_code = result.get('error_code')
+            message = ResponseCodes.get_message(error_code)
+        result['message'] = message
+        return result
+        
+
+
     def validate_user(self, user_id: str) -> bool:
         '''
         Validate a user if account exists
@@ -123,11 +138,8 @@ class DatabaseApi:
         })
         result = response.json()
         print(result)
-        try:
-            self._validate_result(result)
-            return result
-        except:
-            return None
+        result = self._add_message(result)
+        return result
     
 
 
