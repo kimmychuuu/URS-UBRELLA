@@ -76,19 +76,25 @@ class DatabaseApi:
     
 
 
-    def check_availability(self, user_id: str) -> bool:
+    def check_availability(self, user_id: str = None, umbrella_uuid: str = None) -> bool:
         '''
         Check if user is available to rent or not
 
         Parameters:
         user_id (str) : User ID
+        umbrella_uuid (str) : Umbrella UUID
 
         Returns:
         availability (bool) : Available or not
         '''
+        initial_params = {
+            'idNumber': user_id,
+            'umbrellaUUID': umbrella_uuid
+        }
+        params = {key: value for key, value in initial_params.items() if value is not None}
         response = requests.post(f'{self.base_url}/checkAvailability', {
             'apiKey': self.api_key,
-            'idNumber': user_id,
+            **params
         })
         result = response.json()
         self._validate_result(result)

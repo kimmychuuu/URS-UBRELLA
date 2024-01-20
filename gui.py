@@ -178,7 +178,11 @@ class ScanUserPage(tk.Canvas):
                 if not messagebox.askretrycancel('Invalid QR Code', 'User ID not found. Retry scanning?', parent=self):
                     self.root.show_home_page()
 
-        rent_available = self.root.machine.check_availability(user_id)
+        try:
+            rent_available = self.root.machine.check_availability(user_id)
+        except Exception as e:
+            messagebox.showerror('API Error', f'API Error: {e}')
+            self.root.show_home_page()
         if rent_available:
             self.root.show_rent_page()
         else:

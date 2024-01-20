@@ -264,17 +264,18 @@ class Machine:
     
 
 
-    def check_availability(self, user_id: str) -> bool:
+    def check_availability(self, user_id: str = None, umbrella_uuid: str = None) -> bool:
         '''
         Check if user is available to rent or not
 
         Parameters:
         user_id (str) : User ID
+        umbrella_uuid (str) : Umbrella UUID
 
         Returns:
         availability (bool) : Available or not
         '''
-        return self.database.check_availability(user_id)
+        return self.database.check_availability(user_id=user_id, umbrella_uuid=umbrella_uuid)
     
 
 
