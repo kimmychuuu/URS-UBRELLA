@@ -178,7 +178,11 @@ class ScanUserPage(tk.Canvas):
                 if not messagebox.askretrycancel('Invalid QR Code', 'User ID not found. Retry scanning?', parent=self):
                     self.root.show_home_page()
 
-        rent_available = self.root.machine.check_availability(user_id)
+        try:
+            rent_available = self.root.machine.check_availability(user_id)
+        except Exception as e:
+            messagebox.showerror('API Error', f'API Error: {e}')
+            self.root.show_home_page()
         if rent_available:
             self.root.show_rent_page()
         else:
@@ -262,6 +266,13 @@ class RentPage(tk.Canvas):
 
     def scan(self):
         umbrella_uuid = self.root.machine.scan_qrcode(gui=True)
+        transaction = self.root.machine.get_latest_transaction(umbrella_uuid=umbrella_uuid)
+        if transaction:
+            damage_rating = transaction.get("damage_rating")
+            if damage_rating == 'None':
+                if messagebox.askyesno('No previous damage assessment',
+                                       'No previous damage assessment found, would you like to assess umbrella damage?'):
+                    self.root.show_pre_damage_assessment_page(umbrella_uuid)
         try:
             self.root.machine.rent_umbrella(
                 user_id=self.root.machine.user,
@@ -271,13 +282,6 @@ class RentPage(tk.Canvas):
         except Exception as e:
             messagebox.showerror('Exception', e)
         self.root.machine.logout()
-        transaction = self.root.machine.get_latest_transaction(umbrella_uuid=umbrella_uuid)
-        if transaction:
-            damage_rating = transaction.get("damage_rating")
-            if damage_rating == 'None':
-                if messagebox.askyesno('No previous damage assessment',
-                                       'No previous damage assessment found, would you like to assess umbrella damage?'):
-                    self.root.show_pre_damage_assessment_page(umbrella_uuid)
         self.root.show_thankyou_page()
 
         
@@ -381,6 +385,16 @@ class PreDamageAssessmentPage(tk.Canvas):
             
         previous_transaction = self.root.machine.get_latest_transaction(umbrella_uuid=self.umbrella_uuid)
         self.root.machine.deduct_balance(previous_transaction['user']['id'], damage_fee)
+
+        try:
+            self.root.machine.rent_umbrella(
+                user_id=self.root.machine.user,
+                umbrella_uuid=self.umbrella_uuid,
+                rented_at=datetime.now(),
+            )
+        except Exception as e:
+            messagebox.showerror('Exception', e)
+        self.root.machine.logout()
         self.root.show_thankyou_page()
 
     @staticmethod
