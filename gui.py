@@ -273,6 +273,7 @@ class RentPage(tk.Canvas):
                 if messagebox.askyesno('No previous damage assessment',
                                        'No previous damage assessment found, would you like to assess umbrella damage?'):
                     self.root.show_pre_damage_assessment_page(umbrella_uuid)
+                    return
         try:
             self.root.machine.rent_umbrella(
                 user_id=self.root.machine.user,
@@ -679,13 +680,13 @@ class PaymentPage(tk.Canvas):
         self.after(1000, self.wait_for_umbrella)
 
     def wait_for_umbrella(self):
-        while self.root.machine.get_distance_from_ultrasonic(1) > 7:
+        while self.root.machine.open_returning_servo():
             pass
-        self.root.machine.open_returning_servo()
+        self.root.machine.get_distance_from_ultrasonic(1) > 7
         self.root.machine.start_motor()
-        while self.root.machine.get_distance_from_ultrasonic(2) > 4:
+        while self.root.machine.close_returning_servo():
             pass
-        self.root.machine.close_returning_servo()
+        self.root.machine.get_distance_from_ultrasonic(2) > 4
         self.root.machine.stop_motor()
         self.root.machine.tone()
         self.root.show_thankyou_page()

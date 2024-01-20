@@ -2,9 +2,9 @@
 
 
 // Motor Driver
-#define enA 10 // PWM
+#define enA 8 // PWM
 #define in1 9  // IN1
-#define in2 8  // IN2
+#define in2 10  // IN2
 
 //buzzer
 #define buzzer 7
