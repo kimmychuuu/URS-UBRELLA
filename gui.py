@@ -650,8 +650,9 @@ class PaymentPage(tk.Canvas):
             self.counter_label.update()
         else:
             extra = self.root.machine.inserted_coins - total_payment
-            self.root.machine.add_balance(self.root.machine.user, extra)
-            self.root.machine.reset_inserted_coins()
+            if extra > 0:
+                self.root.machine.add_balance(self.root.machine.user, extra)
+                self.root.machine.reset_inserted_coins()
         self.root.machine.accepting_coin = False
         self.counter_label.configure(text='0')
         self.counter_label.update()
