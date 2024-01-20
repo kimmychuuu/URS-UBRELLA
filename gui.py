@@ -645,13 +645,15 @@ class PaymentPage(tk.Canvas):
         total_payment = self.details['total_fee']
         while self.root.machine.inserted_coins < total_payment:
             remaining = total_payment - self.root.machine.inserted_coins
-            self.after(50, lambda: self.counter_label.configure(text=f'{remaining}'))
+            self.counter_label.configure(text=f'{remaining}')
+            self.counter_label.update()
         else:
             extra = self.root.machine.inserted_coins - total_payment
             self.root.machine.add_balance(self.root.machine.user, extra)
             self.root.machine.reset_inserted_coins()
         self.root.machine.accepting_coin = False
-        self.after(50, lambda: self.counter_label.configure(text='0'))
+        self.counter_label.configure(text='0')
+        self.counter_label.update()
         try:
             self.root.machine.return_umbrella(
                 damage_fee=self.details.get('damage_fee'),
