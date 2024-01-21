@@ -395,7 +395,7 @@ class PreDamageAssessmentPage(tk.Canvas):
         damage_fee = 0
         for damage in damages:
             damage_fee += self.get_damage_fee(damage)
-            
+        print(damage_fee)   
         previous_transaction = self.root.machine.get_latest_transaction(umbrella_uuid=self.umbrella_uuid)
         self.root.machine.deduct_balance(previous_transaction['user']['id_number'], damage_fee)
 
@@ -655,8 +655,10 @@ class PaymentPage(tk.Canvas):
         self.root.machine.accepting_coin = True
         total_payment = self.details['total_fee']
         self.root.machine.reset_inserted_coins()
+        print(total_payment)
         while self.root.machine.inserted_coins < total_payment:
             remaining = total_payment - self.root.machine.inserted_coins
+            print(remaining)
             self.counter_label.configure(text=f'{remaining}')
             self.counter_label.update()
         else:
@@ -697,13 +699,13 @@ class PaymentPage(tk.Canvas):
         self.after(1000, self.wait_for_umbrella)
 
     def wait_for_umbrella(self):
-        while self.root.machine.open_returning_servo():
+        self.root.machine.open_returning_servo()
+        while self.root.machine.get_distance_from_ultrasonic(1) > 7:
             pass
-        self.root.machine.get_distance_from_ultrasonic(1) > 7
         self.root.machine.start_motor()
-        while self.root.machine.close_returning_servo():
+        while self.root.machine.get_distance_from_ultrasonic(2) > 10:
             pass
-        self.root.machine.get_distance_from_ultrasonic(2) > 4
+        self.root.machine.close_returning_servo()
         self.root.machine.stop_motor()
         self.root.machine.tone()
         self.root.show_thankyou_page()
