@@ -5,7 +5,7 @@ import statistics
 
 from tkinter import ttk as ttk
 from tkinter import messagebox  as messagebox
-from datetime import datetime
+from datetime import datetime, timedelta
 from PIL import Image, ImageTk
 
 
@@ -223,7 +223,8 @@ class RentPage(tk.Canvas):
         self.root.machine.accepting_coin = True
         deposit_amount = 5
         while self.root.machine.inserted_coins < deposit_amount:
-            print(self.root.machine.inserted_coins)
+            # print(self.root.machine.inserted_coins)
+            pass
         else:
             extra = self.root.machine.inserted_coins - deposit_amount
             self.root.machine.add_balance(self.root.machine.user, extra)
@@ -243,6 +244,7 @@ class RentPage(tk.Canvas):
         self.after(1000, self.dispense)
 
     def dispense(self):
+        start_time = datetime.now()
         self.root.machine.start_motor()
         while self.root.machine.get_distance_from_ultrasonic(3) > 10:
             pass
@@ -251,6 +253,9 @@ class RentPage(tk.Canvas):
             pass
         self.root.machine.close_dispensing_servo()
         self.root.machine.stop_motor()
+        end_time = datetime.now()
+        elapsed_time = end_time - start_time
+        print(f'Dispensing time: {elapsed_time.total_seconds()} seconds')
         self.root.machine.tone()
 
         self.scan_umbrella()
@@ -395,7 +400,7 @@ class PreDamageAssessmentPage(tk.Canvas):
         damage_fee = 0
         for damage in damages:
             damage_fee += self.get_damage_fee(damage)
-        print(damage_fee)   
+        # print(damage_fee)   
         previous_transaction = self.root.machine.get_latest_transaction(umbrella_uuid=self.umbrella_uuid)
         self.root.machine.deduct_balance(previous_transaction['user']['id_number'], damage_fee)
 
@@ -655,10 +660,10 @@ class PaymentPage(tk.Canvas):
         self.root.machine.accepting_coin = True
         total_payment = self.details['total_fee']
         self.root.machine.reset_inserted_coins()
-        print(total_payment)
+        # print(total_payment)
         while self.root.machine.inserted_coins < total_payment:
             remaining = total_payment - self.root.machine.inserted_coins
-            print(remaining)
+            # print(remaining)
             self.counter_label.configure(text=f'{remaining}')
             self.counter_label.update()
         else:
