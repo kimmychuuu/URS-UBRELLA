@@ -2,6 +2,7 @@ from urs_umbrella import Machine
 import tkinter as tk
 import time
 import statistics
+import re
 
 from tkinter import ttk as ttk
 from tkinter import messagebox  as messagebox
@@ -299,6 +300,9 @@ class RentPage(tk.Canvas):
             )
         except Exception as e:
             messagebox.showerror('Exception', e)
+        user_data = self.root.machine.get_data(self.root.machine.user)
+        contact = re.sub(r'^09', '+639', user_data.get('contact_number', ''))
+        self.root.machine.send_sms(contact, 'You have rented successfully rented an umbrella')
         self.root.machine.logout()
         self.root.show_thankyou_page()
 
@@ -412,6 +416,9 @@ class PreDamageAssessmentPage(tk.Canvas):
             )
         except Exception as e:
             messagebox.showerror('Exception', e)
+        user_data = self.root.machine.get_data(self.root.machine.user)
+        contact = re.sub(r'^09', '+639', user_data.get('contact_number', ''))
+        self.root.machine.send_sms(contact, 'You have rented successfully rented an umbrella')
         self.root.machine.logout()
         self.root.show_thankyou_page()
 
@@ -713,6 +720,10 @@ class PaymentPage(tk.Canvas):
         self.root.machine.close_returning_servo()
         self.root.machine.stop_motor()
         self.root.machine.tone()
+        user_data = self.root.machine.get_data(self.root.machine.user)
+        contact = re.sub(r'^09', '+639', user_data.get('contact_number', ''))
+        self.root.machine.send_sms(contact, 'You have rented successfully returned an umbrella')
+        self.root.machine.logout()
         self.root.show_thankyou_page()
 
 
