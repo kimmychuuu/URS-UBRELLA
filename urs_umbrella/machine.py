@@ -46,7 +46,7 @@ class Machine:
         else:
             raise Exception('Invalid hardware callback priority value')
 
-        #self.sim808 = Sim808(sim808_port)
+        self.sim808 = Sim808(sim808_port)
         self.database = DatabaseApi(api_url, api_key)
 
         self.user = None

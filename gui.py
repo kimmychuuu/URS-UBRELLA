@@ -223,7 +223,7 @@ class RentPage(tk.Canvas):
         self.root.machine.accepting_coin = True
         deposit_amount = 5
         while self.root.machine.inserted_coins < deposit_amount:
-            # print(self.root.machine.inserted_coins)
+            print(self.root.machine.inserted_coins)
             pass
         else:
             extra = self.root.machine.inserted_coins - deposit_amount
@@ -744,7 +744,7 @@ class ThankYouPage(tk.Canvas):
 
 if __name__ == '__main__':
     machine = Machine(
-        arduino_port='/dev/ttyUSB0',
+        arduino_port='/dev/ttyUSB1',
         sim808_port='/dev/ttyUSB0',
         api_key='URSUmbrella@2023',
         api_url='https://ursubrella.online/api',

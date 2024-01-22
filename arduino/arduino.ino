@@ -2,7 +2,7 @@
 
 
 // Motor Driver
-#define enA 8 // PWM
+#define enA A5 // PWM
 #define in1 9  // IN1
 #define in2 10  // IN2
 
@@ -102,22 +102,22 @@ void loop() {
   }
 
   else if(currentCommand == 6){
-    moveDispensingServo(180); 
+    moveReturningServo(0); 
     currentCommand = -1;
   }
 
   else if(currentCommand == 7){
-    moveDispensingServo(0);
+    moveReturningServo2(90);
     currentCommand = -1;
   }
 
   else if(currentCommand == 8){
-    moveReturningServo(180);
+    moveDispensingServo(0);
     currentCommand = -1;
   }
   
   else if(currentCommand == 9){
-    moveReturningServo(0);
+    moveDispensingServo2(90);
     currentCommand = -1;
   }
   else if(currentCommand ==10){
@@ -141,9 +141,9 @@ void startMotor() {
   /*
   * Start DC Motor at full speed
   */
-  digitalWrite(in1, LOW);
-  digitalWrite(in2, HIGH);
-  analogWrite(enA, 150); 
+  digitalWrite(in1, HIGH);
+  digitalWrite(in2, LOW);
+  analogWrite(enA, 130); 
 }
 
 void stopMotor() {
@@ -157,15 +157,30 @@ void moveDispensingServo(int angle) {
   /*
   * Move servo to specific angle
   */
-  servo1.write(angle);
+  servo1.write(35);
+}
+
+void moveDispensingServo2(int angle) {
+  /*
+  * Move servo to specific angle
+  */
+  servo1.write(90);
 }
 
 void moveReturningServo(int angle) {
   /*
   * Move servo to specific angle
   */
-  servo2.write(angle);
+  servo2.write(0);
 }
+
+void moveReturningServo2(int angle) {
+  /*
+  * Move servo to specific angle
+  */
+  servo2.write(180);
+}
+
 
 void tone (){
   /*
