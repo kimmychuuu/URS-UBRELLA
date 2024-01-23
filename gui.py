@@ -59,13 +59,13 @@ class Root(tk.Tk):
             child.destroy()
         pre_damage_assessment_page = PreDamageAssessmentPage(self, 
                                                              umbrella_uuid=umbrella_uuid, 
-                                                             bg='#1B1E2D')
+                                                             bg='#52B2B0')
         pre_damage_assessment_page.pack()
         
     def show_return_page(self):
         for child in self.winfo_children():
             child.destroy()
-        return_page = ReturnPage(self, bg='#1B1E2D')
+        return_page = ReturnPage(self, bg='#52B2B0')
         return_page.pack()
 
     def show_payment_page(self, details):
