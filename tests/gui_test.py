@@ -169,7 +169,7 @@ class ScanUserPage(tk.Canvas):
         #         self.machine.user = user_id
         #         break
         # rent_available = self.machine.check_availability(user_id)
-        rent_available = False
+        rent_available = True
         if rent_available:
             self.root.show_rent_page()
         else:
@@ -194,7 +194,7 @@ class RentPage(tk.Canvas):
         self.image_placeholder = self.create_image(145, 140, image=self.deposit_image, anchor=tk.NW)
 
         self.title_label = self.create_text(540, 220, text='Please deposit ₱5', font=('Montserrat', 28, 'bold'), fill='white', anchor=tk.NW)
-        tip = 'Tip: Any change will be\n     automatically added to your wallet,\n     which can be used later on :)'
+        tip = 'Reminder: Accepting 5 peso coin only'
         self.subtitle_label = self.create_text(540, 275, text=tip, font=('Montserrat', 16, 'bold'), fill='black', anchor=tk.NW)
 
         # Preload other assets
